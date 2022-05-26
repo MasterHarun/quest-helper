@@ -350,7 +350,9 @@ public enum QuestHelperQuest
 	MA2_LOCATOR("Mage Arena II Locator", QuestVarbits.QUEST_THE_MAGE_ARENA_II, -1, Quest.Type.GENERIC,
 		Quest.Difficulty.GENERIC),
 
-	WOODCUTTING("Woodcutting", Skill.WOODCUTTING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL);
+	WOODCUTTING("Woodcutting", Skill.WOODCUTTING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL),
+
+	MINING("Mining", Skill.MINING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL);
 
 	@Getter
 	private final int id;

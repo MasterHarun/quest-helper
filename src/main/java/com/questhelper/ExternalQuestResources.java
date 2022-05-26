@@ -267,8 +267,9 @@ public enum ExternalQuestResources {
     // Generic helpers
 	MA2_LOCATOR("https://oldschool.runescape.wiki/w/The_Mage_Arena_II"),
 
-	WOODCUTTING("https://oldschool.runescape.wiki/w/Pay-to-play_Woodcutting_training");
+	WOODCUTTING("https://oldschool.runescape.wiki/w/Pay-to-play_Woodcutting_training"),
 
+	MINING("https://oldschool.runescape.wiki/w/Pay-to-play_Mining_training");
 	ExternalQuestResources()
 	{
 		this.wikiURL = "not available";
