@@ -58,9 +58,9 @@ public class Mining extends ComplexStateQuestHelper
 
 	SkillRequirement m6, m11, m21, m31, m41, m61;
 
-	SkillRequirement m15, m45;
+	SkillRequirement m15, m30, m40, m45, m70, m75, m92;
 
-	QuestStep mineCopperTinOre, mineIronOre, mineGranite;
+	ObjectStep mineCopperTinOre, mineIronOre, mineMotherlode, mineGranite, mineGem, mineVolcanic, mineBlast, mineAmethyst;
 
 	@Override
 	public QuestStep loadStep()
@@ -69,8 +69,13 @@ public class Mining extends ComplexStateQuestHelper
 		setupSteps();
 
 		ConditionalStep fullTraining = new ConditionalStep(this, mineCopperTinOre);
-		fullTraining.addStep(m15, mineIronOre);
+//		fullTraining.addStep(m15, mineIronOre);
+		fullTraining.addStep(m30, mineMotherlode);
+//		fullTraining.addStep(m40, mineGem);
 		fullTraining.addStep(m45, mineGranite);
+//		fullTraining.addStep(m70, mineVolcanic);
+//		fullTraining.addStep(m75, mineBlast);
+//		fullTraining.addStep(m92, mineAmethyst);
 
 		return fullTraining;
 	}
@@ -85,7 +90,12 @@ public class Mining extends ComplexStateQuestHelper
 		m61 = new SkillRequirement(Skill.MINING, 61);
 
 		m15 = new SkillRequirement(Skill.MINING, 15);
+		m30 = new SkillRequirement(Skill.MINING, 30);
+//		m40 = new SkillRequirement(Skill.MINING, 40);
 		m45 = new SkillRequirement(Skill.MINING, 45);
+//		m70 = new SkillRequirement(Skill.MINING, 70);
+//		m75 = new SkillRequirement(Skill.MINING, 75);
+//		m92 = new SkillRequirement(Skill.MINING, 92);
 
 		ironPickAxe = new ItemRequirement("Iron Pickaxe", ItemID.IRON_PICKAXE).showConditioned(
 			new Conditions(LogicType.NOR, m6)
@@ -100,7 +110,7 @@ public class Mining extends ComplexStateQuestHelper
 			new Conditions(m21, new Conditions(LogicType.NOR, m31))
 		);
 		adamantPickAxe = new ItemRequirement("Adamant Pickaxe", ItemID.ADAMANT_PICKAXE).showConditioned(
-			new Conditions(m31,new Conditions(LogicType.NOR, m41))
+			new Conditions(m31, new Conditions(LogicType.NOR, m41))
 		);
 		runePickAxe = new ItemRequirement("Rune Pickaxe", ItemID.RUNE_PICKAXE).showConditioned(
 			new Conditions(m41, new Conditions(LogicType.NOR, m61))
@@ -127,18 +137,51 @@ public class Mining extends ComplexStateQuestHelper
 	{
 		mineCopperTinOre = new ObjectStep(this, ObjectID.ROCKS_11361, new WorldPoint(3226, 3146, 0),
 			"Mine copper or tin ore until 15 Mining. You can choose to drop the ore, or " +
-			"bank them.", true, ironPickAxe, steelPickAxe, blackPickAxe,
+				"bank them.", true, ironPickAxe, steelPickAxe, blackPickAxe,
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+		mineCopperTinOre.addAlternateObjects(ObjectID.ROCKS_11161);
 
 		mineIronOre = new ObjectStep(this, ObjectID.ROCKS_11364, new WorldPoint(3295, 3310, 0),
-			"Mine iron ore until 45/99 Mining. You can choose to drop the ore, or " +
-			"bank them.", true, blackPickAxe, mithrilPickAxe, adamantPickAxe, runePickAxe, dragonPickAxe,
+			"Mine iron ore until 45/70 Mining. You can choose to drop the ore, or " +
+				"bank them.", true, blackPickAxe, mithrilPickAxe, adamantPickAxe, runePickAxe, dragonPickAxe,
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+		mineIronOre.addAlternateObjects(ObjectID.ROCKS_11365);
+
+		mineMotherlode = new ObjectStep(this, ObjectID.ORE_VEIN_26661, new WorldPoint(3726, 5671, 0),
+			"Mine at the motherlode. Collect pay-dirt and deposit into the hopper.", true, mithrilPickAxe, adamantPickAxe, runePickAxe, dragonPickAxe,
+			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+		mineMotherlode.addAlternateObjects(ObjectID.ORE_VEIN_26662, ObjectID.ORE_VEIN_26663, ObjectID.ORE_VEIN_26664);
+
+//		//edit object and worldpoint
+//		mineGem = new ObjectStep(this, ObjectID, new WorldPoint(),
+//			"", true, mithrilPickAxe, adamantPickAxe, runePickAxe, dragonPickAxe,
+//			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+//		mineGem.addAlternateObjects();
 
 		mineGranite = new ObjectStep(this, ObjectID.ROCKS_11387, new WorldPoint(3166, 2909, 0),
-			"Mine copper or tin until 15 Mining. You can choose to drop the ore, or " +
-			"bank them.", true, ironPickAxe, steelPickAxe, blackPickAxe,
+			"Mine Granite and drop the ore until 70 or all the way to 99. ", true,  runePickAxe, dragonPickAxe,
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+		mineGranite.addAlternateObjects();
+
+//		//edit object and worldpoint
+//		mineVolcanic = new ObjectStep(this, ObjectID, new WorldPoint(),
+//			"", true, mithrilPickAxe, adamantPickAxe, runePickAxe, dragonPickAxe,
+//			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+//		mineVolcanic.addAlternateObjects();
+//		//edit object and worldpoint
+//		mineBlast = new ObjectStep(this, ObjectID, new WorldPoint(),
+//			"", true, mithrilPickAxe, adamantPickAxe, runePickAxe, dragonPickAxe,
+//			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+//		mineBlast.addAlternateObjects();
+//		//edit object and worldpoint
+//		mineAmethyst = new ObjectStep(this, ObjectID, new WorldPoint(),
+//			"", true, mithrilPickAxe, adamantPickAxe, runePickAxe, dragonPickAxe,
+//			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+//		mineAmethyst.addAlternateObjects();
+
+
+
+
 	}
 
 	@Override
@@ -168,10 +211,15 @@ public class Mining extends ComplexStateQuestHelper
 		allSteps.add(new PanelDetails("1 - 15 Mine Copper or Tin ore", Collections.singletonList(mineCopperTinOre), ironPickAxe,
 			steelPickAxe, blackPickAxe,
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
-		allSteps.add(new PanelDetails("15 - 45/99 Mine Iron ore", Collections.singletonList(mineIronOre), blackPickAxe,
-			mithrilPickAxe, adamantPickAxe, runePickAxe, dragonPickAxe, prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
+		allSteps.add(new PanelDetails("15 - 30/99 Mine Iron ore", Collections.singletonList(mineIronOre), blackPickAxe,
+			mithrilPickAxe, adamantPickAxe, runePickAxe, dragonPickAxe,
+			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
+		allSteps.add(new PanelDetails("30 - 45/99 Mine at the Motherlode Mine", Collections.singletonList(mineMotherlode), mithrilPickAxe,
+			adamantPickAxe, runePickAxe, dragonPickAxe,
+			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 		allSteps.add(new PanelDetails("45 - 70/99 Mine Granite ore", Collections.singletonList(mineGranite), runePickAxe,
-			dragonPickAxe, prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
+			dragonPickAxe,
+			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 		return allSteps;
 	}
 }
