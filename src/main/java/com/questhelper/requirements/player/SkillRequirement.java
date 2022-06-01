@@ -99,7 +99,6 @@ public class SkillRequirement extends AbstractRequirement
 		this.displayText = displayText;
 	}
 
-
 	@Override
 	public boolean check(Client client)
 	{
@@ -128,4 +127,5 @@ public class SkillRequirement extends AbstractRequirement
 
 		return returnText;
 	}
+
 }

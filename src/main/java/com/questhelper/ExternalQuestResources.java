@@ -269,7 +269,9 @@ public enum ExternalQuestResources {
 
 	WOODCUTTING("https://oldschool.runescape.wiki/w/Pay-to-play_Woodcutting_training"),
 
-	MINING("https://oldschool.runescape.wiki/w/Pay-to-play_Mining_training");
+	MINING("https://oldschool.runescape.wiki/w/Pay-to-play_Mining_training"),
+
+	FLETCHING("https://oldschool.runescape.wiki/w/Fletching_training");
 	ExternalQuestResources()
 	{
 		this.wikiURL = "not available";
