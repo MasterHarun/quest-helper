@@ -99,6 +99,18 @@ public class SkillRequirement extends AbstractRequirement
 		this.displayText = displayText;
 	}
 
+	/**
+	 * Check if the skill level is in between a range
+	 *
+	 * @param check the skill level to check
+	 * @param low the lower end of the range
+	 * @param high the higher end of the range
+	 *
+	 */
+	public static boolean skillIsBetween(int check, int low, int high){
+		return low <= check && check < high;
+	}
+
 
 	@Override
 	public boolean check(Client client)
@@ -128,4 +140,5 @@ public class SkillRequirement extends AbstractRequirement
 
 		return returnText;
 	}
+
 }

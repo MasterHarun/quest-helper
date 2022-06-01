@@ -75,6 +75,7 @@ public class Mining extends ComplexStateQuestHelper
 	{
 		return client.getRealSkillLevel(Skill.MINING);
 	}
+
 	@Override
 	public QuestStep loadStep()
 	{
@@ -84,23 +85,23 @@ public class Mining extends ComplexStateQuestHelper
 		ConditionalStep fullTraining = new ConditionalStep(this, mineCopperTinOre);
 		// Selection of step is determined here. Only the top regardless of player skill level
 		int s = skillLevel(client);
-		if ( s >= 15 && s < 30)
+		if (s >= 15 && s < 30)
 		{
 			fullTraining.addStep(m15, mineIronOre);
 		}
-		else if ( s >= 30 && s < 40)
+		else if (s >= 30 && s < 40)
 		{
 			fullTraining.addStep(m30, mineMotherlode);
 		}
-		else if ( s >= 40 && s < 45)
+		else if (s >= 40 && s < 45)
 		{
 			fullTraining.addStep(m40, mineGem);
 		}
-		else if ( s >= 45 && s < 70)
+		else if (s >= 45 && s < 70)
 		{
 			fullTraining.addStep(m45, mineGranite);
 		}
-		else if ( s >= 70 && s < 75)
+		else if (s >= 70 && s < 75)
 		{
 			fullTraining.addStep(m70, mineVolcanic);
 		}
@@ -303,32 +304,40 @@ public class Mining extends ComplexStateQuestHelper
 
 		allSteps.add(new PanelDetails("15 - 45/70 Mine Iron ore", Collections.singletonList(mineIronOre), blackPickAxe,
 			mithrilPickAxe, adamantPickAxe, runePickAxe, dragonPickAxe,
+			new SkillRequirement(Skill.MINING, 15),
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 
 		allSteps.add(new PanelDetails("30 - 99 Motherlode Mine", Collections.singletonList(mineMotherlode), mithrilPickAxe,
 			adamantPickAxe, runePickAxe, dragonPickAxe,
+			new SkillRequirement(Skill.MINING, 30),
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 
 		allSteps.add(new PanelDetails("40 - 99 Mine Gem rocks.", Collections.singletonList(mineGem), adamantPickAxe,
 			runePickAxe, dragonPickAxe,
-			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs, amuletGlory, karamjaGloves3,
+			new SkillRequirement(Skill.MINING, 40),
+			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs,
+			amuletGlory, karamjaGloves3,
 			shiloVillage));
 
 		allSteps.add(new PanelDetails("45 - 99 Mine Granite", Collections.singletonList(mineGranite), runePickAxe,
 			dragonPickAxe,
+			new SkillRequirement(Skill.MINING, 45),
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 
 		allSteps.add(new PanelDetails("70 - 99 Volcanic Mine", Collections.singletonList(mineVolcanic), runePickAxe,
 			dragonPickAxe,
+			new SkillRequirement(Skill.MINING, 70),
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 
 		allSteps.add(new PanelDetails("75 - 99 Mine Blast Mine", Collections.singletonList(mineBlast), runePickAxe,
 			dragonPickAxe,
+			new SkillRequirement(Skill.MINING, 75),
 			chisel, tinderbox, dynamite, lovakengj,
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 
 		allSteps.add(new PanelDetails("92 - 99 Mine Amethyst", Collections.singletonList(mineAmethyst), runePickAxe,
 			dragonPickAxe,
+			new SkillRequirement(Skill.MINING, 92),
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs,
 			varrockArmour4, expertMiningGloves));
 //

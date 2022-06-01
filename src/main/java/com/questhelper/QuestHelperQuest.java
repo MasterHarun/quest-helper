@@ -352,7 +352,9 @@ public enum QuestHelperQuest
 
 	WOODCUTTING("Woodcutting", Skill.WOODCUTTING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL),
 
-	MINING("Mining", Skill.MINING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL);
+	MINING("Mining", Skill.MINING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL),
+
+	FLETCHING("Fletching", Skill.FLETCHING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL);
 
 	@Getter
 	private final int id;
