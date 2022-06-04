@@ -71,41 +71,38 @@ public class Mining extends ComplexStateQuestHelper
 
 	ObjectStep mineCopperTinOre, mineIronOre, mineMotherlode, mineGranite, mineGem, mineVolcanic, mineBlast, mineAmethyst;
 
-	public int skillLevel(Client client)
-	{
-		return client.getRealSkillLevel(Skill.MINING);
-	}
 
 	@Override
 	public QuestStep loadStep()
 	{
+
 		setupRequirements();
 		setupSteps();
 
+		int s = client.getRealSkillLevel(Skill.MINING);
 		ConditionalStep fullTraining = new ConditionalStep(this, mineCopperTinOre);
-		// Selection of step is determined here. Only the top regardless of player skill level
-		int s = skillLevel(client);
-		if (s >= 15 && s < 30)
+
+		if (SkillRequirement.skillIsBetween(s, 15, 30))
 		{
 			fullTraining.addStep(m15, mineIronOre);
 		}
-		else if (s >= 30 && s < 40)
+		else if (SkillRequirement.skillIsBetween(s, 30, 40))
 		{
 			fullTraining.addStep(m30, mineMotherlode);
 		}
-		else if (s >= 40 && s < 45)
+		else if (SkillRequirement.skillIsBetween(s, 40, 45))
 		{
 			fullTraining.addStep(m40, mineGem);
 		}
-		else if (s >= 45 && s < 70)
+		else if (SkillRequirement.skillIsBetween(s, 45, 70))
 		{
 			fullTraining.addStep(m45, mineGranite);
 		}
-		else if (s >= 70 && s < 75)
+		else if (SkillRequirement.skillIsBetween(s, 70, 75))
 		{
 			fullTraining.addStep(m70, mineVolcanic);
 		}
-		else if (s >= 75 && s < 92)
+		else if (SkillRequirement.skillIsBetween(s, 75, 92))
 		{
 			fullTraining.addStep(m75, mineBlast);
 		}
@@ -117,14 +114,6 @@ public class Mining extends ComplexStateQuestHelper
 		{
 			fullTraining.addStep(m15, mineIronOre);
 		}
-//		fullTraining.addStep(m30, mineMotherlode);
-//		fullTraining.addStep(m40, mineGem);
-//		fullTraining.addStep(m45, mineGranite);
-//		fullTraining.addStep(m15, mineIronOre);
-
-//		fullTraining.addStep(m70, mineVolcanic);
-//		fullTraining.addStep(m75, mineBlast);
-//		fullTraining.addStep(m92, mineAmethyst);
 
 		return fullTraining;
 	}
@@ -199,7 +188,7 @@ public class Mining extends ComplexStateQuestHelper
 		tinderbox = tinderbox.showConditioned(tinderbox.alsoCheckBank(questBank));
 
 		dynamite = new ItemRequirement("Dynamite", ItemID.DYNAMITE);
-//		dynamite = dynamite.showConditioned(dynamite.alsoCheckBank(questBank));
+		dynamite = dynamite.showConditioned(dynamite.alsoCheckBank(questBank));
 
 		lovakengj = new FavourRequirement(Favour.LOVAKENGJ, 100);
 
@@ -262,7 +251,6 @@ public class Mining extends ComplexStateQuestHelper
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
 		mineBlast.addAlternateObjects(ObjectID.HARD_ROCK_28580);
 
-//		//edit object and worldpoint
 		mineAmethyst = new ObjectStep(this, ObjectID.CRYSTALS, new WorldPoint(3024, 9704, 0),
 			"Mine Amethyst Ore in the Mining guild.",
 			true,
@@ -340,7 +328,7 @@ public class Mining extends ComplexStateQuestHelper
 			new SkillRequirement(Skill.MINING, 92),
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs,
 			varrockArmour4, expertMiningGloves));
-//
+
 		return allSteps;
 	}
 }
