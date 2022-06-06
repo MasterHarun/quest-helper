@@ -75,45 +75,18 @@ public class Mining extends ComplexStateQuestHelper
 	@Override
 	public QuestStep loadStep()
 	{
-
 		setupRequirements();
 		setupSteps();
 
-		int s = client.getRealSkillLevel(Skill.MINING);
 		ConditionalStep fullTraining = new ConditionalStep(this, mineCopperTinOre);
 
-		if (SkillRequirement.skillIsBetween(s, 15, 30))
-		{
-			fullTraining.addStep(m15, mineIronOre);
-		}
-		else if (SkillRequirement.skillIsBetween(s, 30, 40))
-		{
-			fullTraining.addStep(m30, mineMotherlode);
-		}
-		else if (SkillRequirement.skillIsBetween(s, 40, 45))
-		{
-			fullTraining.addStep(m40, mineGem);
-		}
-		else if (SkillRequirement.skillIsBetween(s, 45, 70))
-		{
-			fullTraining.addStep(m45, mineGranite);
-		}
-		else if (SkillRequirement.skillIsBetween(s, 70, 75))
-		{
-			fullTraining.addStep(m70, mineVolcanic);
-		}
-		else if (SkillRequirement.skillIsBetween(s, 75, 92))
-		{
-			fullTraining.addStep(m75, mineBlast);
-		}
-		else if (s >= 92)
-		{
-			fullTraining.addStep(m92, mineAmethyst);
-		}
-		else
-		{
-			fullTraining.addStep(m15, mineIronOre);
-		}
+		fullTraining.addStep(m92, mineAmethyst);
+		fullTraining.addStep(m75, mineBlast);
+		fullTraining.addStep(m70, mineVolcanic);
+		fullTraining.addStep(m45, mineGranite);
+		fullTraining.addStep(m40, mineGem);
+		fullTraining.addStep(m30, mineMotherlode);
+		fullTraining.addStep(m15, mineIronOre);
 
 		return fullTraining;
 	}
@@ -229,7 +202,7 @@ public class Mining extends ComplexStateQuestHelper
 		mineGem.addAlternateObjects(ObjectID.ROCKS_11381);
 
 		mineGranite = new ObjectStep(this, ObjectID.ROCKS_11387, new WorldPoint(3166, 2909, 0),
-			"Mine Granite and drop the ore.",
+			"Mine Granite.",
 			true,
 			runePickAxe, dragonPickAxe,
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
