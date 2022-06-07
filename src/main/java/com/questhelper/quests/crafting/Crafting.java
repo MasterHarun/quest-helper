@@ -28,6 +28,7 @@ import com.questhelper.QuestDescriptor;
 import com.questhelper.QuestHelperQuest;
 import com.questhelper.panel.PanelDetails;
 import com.questhelper.questhelpers.ComplexStateQuestHelper;
+import com.questhelper.requirements.Requirement;
 import com.questhelper.requirements.conditional.Conditions;
 import com.questhelper.requirements.item.ItemRequirement;
 import com.questhelper.requirements.player.SkillRequirement;
@@ -42,7 +43,9 @@ import com.questhelper.steps.QuestStep;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.runelite.api.ItemID;
 import net.runelite.api.Skill;
 import net.runelite.client.plugins.skillcalculator.skills.CraftingAction;
@@ -101,52 +104,190 @@ public class Crafting extends ComplexStateQuestHelper
 
 		ConditionalStep fullTraining = new ConditionalStep(this, craftLeatherGloves);
 
+		Map<ItemRequirement, Boolean> uncutGems = new HashMap<ItemRequirement, Boolean>()
+		{{
+			put(uncutSapphire, false);
+			put(uncutEmerald, false);
+			put(uncutRuby, false);
+			put(uncutDiamond, false);
+			put(uncutDragonStone, false);
+		}};
+		Map<ItemRequirement, Boolean> leathers = new HashMap<ItemRequirement, Boolean>()
+		{{
+			put(greenLeather, false);
+			put(blueLeather, false);
+			put(redLeather, false);
+			put(blackLeather, false);
+		}};
+		Map<ItemRequirement, Boolean> items = new HashMap<ItemRequirement, Boolean>()
+		{{
+			put(amethyst, false);
 
-		fullTraining.addStep(c84, craftBlackHideBody);
-		fullTraining.addStep(c77, craftRedHideBody);
-		fullTraining.addStep(c71, craftBlueHideBody);
-		fullTraining.addStep(c63, craftGreenHideBody);
-		fullTraining.addStep(c66, craftAirStaff);
-		fullTraining.addStep(c62, craftFireStaff);
-		fullTraining.addStep(c58, craftEarthStaff);
-		fullTraining.addStep(c54, craftWaterStaff);
-		fullTraining.addStep(c55, cutDragon);
-		fullTraining.addStep(c43, cutDiamond);
-		fullTraining.addStep(c34, cutRuby);
-		fullTraining.addStep(c27, cutEmerald);
-		fullTraining.addStep(c20, cutSapphire);
-		fullTraining.addStep(c14, craftLeatherBody);
-		fullTraining.addStep(c11, craftLeatherVambs);
-		fullTraining.addStep(c9, craftLeatherCowl);
-		fullTraining.addStep(c7, craftLeatherBoots);
+			put(astralRunes, false);
+			put(bucketsOfSand, false);
+			put(smokeBattleStaff, false);
 
-		fullTraining.addStep(c61, superGlassMake);
+			put(glassBlowingPipe, false);
+			put(moltenGlass, false);
 
-		fullTraining.addStep(c89, cutAmDarts);
-		fullTraining.addStep(c87, cutAmJavs);
-		fullTraining.addStep(c85, cutAmArrows);
-		fullTraining.addStep(c83, cutAmBolts);
+			put(uncutSapphire, false);
+			put(uncutEmerald, false);
+			put(uncutRuby, false);
+			put(uncutDiamond, false);
+			put(uncutDragonStone, false);
 
-		fullTraining.addStep(c87, blowLightOrb);
-		fullTraining.addStep(c49, blowLens);
-		fullTraining.addStep(c46, blowOrb);
-		fullTraining.addStep(c42, blowFishbowl);
-		fullTraining.addStep(c33, blowVial);
-		fullTraining.addStep(c12, blowOilLamp);
-		fullTraining.addStep(c4, blowCandleLantern);
-		fullTraining.addStep(c1, blowBeerGlass);
+			put(battleStaff, false);
+			put(leather, false);
 
-		fullTraining.addStep(c74, dragonBrace);
-		fullTraining.addStep(c58, diamondBrace);
-		fullTraining.addStep(c42, rubyBrace);
-		fullTraining.addStep(c38, topazBrace);
-		fullTraining.addStep(c30, emeraldBrace);
-		fullTraining.addStep(c29, jadeBrace);
-		fullTraining.addStep(c23, sapphireBrace);
-		fullTraining.addStep(c22, opalBrace);
-		fullTraining.addStep(c7, goldBrace);
+			put(greenLeather, false);
+			put(blueLeather, false);
+			put(redLeather, false);
+			put(blackLeather, false);
 
+			put(braceletMould, false);
+			put(goldBar, false);
+			put(silverBar, false);
+		}};
+		Map<ItemRequirement, Boolean> cutGems = new HashMap<ItemRequirement, Boolean>()
+		{{
+			put(sapphire, false);
+			put(emerald, false);
+			put(ruby, false);
+			put(diamond, false);
+			put(dragonStone, false);
 
+			put(opal, false);
+			put(jade, false);
+			put(topaz, false);
+		}};
+
+		cutGems.forEach((gem, value) ->
+		{
+			if (gem.check(client))
+			{
+				cutGems.put(gem, true);
+			}
+		});
+		leathers.forEach((leather, value) ->
+		{
+			if (leather.check(client))
+			{
+				cutGems.put(leather, true);
+			}
+		});
+		//check to see if player has any uncut gems and sets value to true
+		uncutGems.forEach((gem, value) ->
+		{
+			if (gem.check(client))
+			{
+				uncutGems.put(gem, true);
+			}
+		});
+		//check to see if player has any item requirements and sets value to true
+		items.forEach((item, value) ->
+		{
+			if (item.check(client))
+			{
+				items.put(item, true);
+			}
+		});
+		if (items.get(smokeBattleStaff) && items.get(astralRunes))
+		{
+			if (items.get(bucketsOfSand) && items.get(giantSeaweed) && lunar.check(client))
+			{
+				fullTraining.addStep(c61, superGlassMake);
+			}
+		}
+
+		if (items.get(glassBlowingPipe) && items.get(moltenGlass))
+		{
+			//only add steps if player does not have any uncut gems.
+			//prioritize leathers and gems
+			if (!leathers.containsValue(true) || !uncutGems.containsValue(true) || !cutGems.containsValue(true))
+			{
+				fullTraining.addStep(c87, blowLightOrb);
+				fullTraining.addStep(c49, blowLens);
+				fullTraining.addStep(c46, blowOrb);
+				fullTraining.addStep(c42, blowFishbowl);
+				fullTraining.addStep(c33, blowVial);
+				fullTraining.addStep(c12, blowOilLamp);
+				fullTraining.addStep(c4, blowCandleLantern);
+				fullTraining.addStep(c1, blowBeerGlass);
+			}
+		}
+		//any dragon leather?
+		if (items.get(greenLeather) || items.get(blueLeather) || items.get(redLeather) || items.get(blackLeather))
+		{
+			if (client.getRealSkillLevel(Skill.CRAFTING) >= 63)
+			{
+				fullTraining.addStep(c84, craftBlackHideBody);
+				fullTraining.addStep(c77, craftRedHideBody);
+				fullTraining.addStep(c71, craftBlueHideBody);
+				fullTraining.addStep(c63, craftGreenHideBody);
+			}
+		}
+		// any battlestaves?
+		if (items.get(battleStaff))
+		{
+			if (client.getRealSkillLevel(Skill.CRAFTING) >= 54)
+			{
+				fullTraining.addStep(c66, craftAirStaff);
+				fullTraining.addStep(c62, craftFireStaff);
+				fullTraining.addStep(c58, craftEarthStaff);
+				fullTraining.addStep(c54, craftWaterStaff);
+			}
+		}
+		//any uncut gems?
+		if (items.get(uncutSapphire) || items.get(uncutEmerald) || items.get(uncutRuby) || items.get(uncutDiamond) || items.get(uncutDragonStone))
+		{
+			if (client.getRealSkillLevel(Skill.CRAFTING) >= 20 && client.getRealSkillLevel(Skill.CRAFTING) <= 77)
+			{
+				fullTraining.addStep(c55, cutDragon);
+				fullTraining.addStep(c43, cutDiamond);
+				fullTraining.addStep(c34, cutRuby);
+				fullTraining.addStep(c27, cutEmerald);
+				fullTraining.addStep(c20, cutSapphire);
+			}
+		}
+		//Does player have any gold or silver bars?
+		if (items.get(goldBar) && items.get(braceletMould) || items.get(silverBar) && items.get(braceletMould))
+		{
+			//We prioritize cutting gems or dhide bodies here.
+			if (!leathers.containsValue(true) && !uncutGems.containsValue(true) && cutGems.containsValue(true) && client.getRealSkillLevel(Skill.CRAFTING) >= 7)
+			{
+				if (items.get(goldBar))
+				{
+					fullTraining.addStep(c74, dragonBrace);
+					fullTraining.addStep(c58, diamondBrace);
+					fullTraining.addStep(c42, rubyBrace);
+					fullTraining.addStep(c30, emeraldBrace);
+					fullTraining.addStep(c23, sapphireBrace);
+					fullTraining.addStep(c7, goldBrace);
+				}
+				if (items.get(silverBar))
+				{
+					fullTraining.addStep(c38, topazBrace);
+					fullTraining.addStep(c29, jadeBrace);
+					fullTraining.addStep(c22, opalBrace);
+				}
+
+			}
+		}
+		if (items.get(amethyst))
+		{
+			fullTraining.addStep(c89, cutAmDarts);
+			fullTraining.addStep(c87, cutAmJavs);
+			fullTraining.addStep(c85, cutAmArrows);
+			fullTraining.addStep(c83, cutAmBolts);
+		}
+		//If no other avenues of items are present this is triggered. or if your skill level is lower than 20.
+		if (items.get(leather) || client.getRealSkillLevel(Skill.CRAFTING) > 20)
+		{
+			fullTraining.addStep(c14, craftLeatherBody);
+			fullTraining.addStep(c11, craftLeatherVambs);
+			fullTraining.addStep(c9, craftLeatherCowl);
+			fullTraining.addStep(c7, craftLeatherBoots);
+		}
 		return fullTraining;
 	}
 
