@@ -271,7 +271,9 @@ public enum ExternalQuestResources {
 
 	MINING("https://oldschool.runescape.wiki/w/Pay-to-play_Mining_training"),
 
-	FLETCHING("https://oldschool.runescape.wiki/w/Fletching_training");
+	FLETCHING("https://oldschool.runescape.wiki/w/Fletching_training"),
+
+	CRAFTING("https://oldschool.runescape.wiki/w/Pay-to-play_Crafting_training");
 	ExternalQuestResources()
 	{
 		this.wikiURL = "not available";
