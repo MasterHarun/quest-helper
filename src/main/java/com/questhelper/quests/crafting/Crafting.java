@@ -63,7 +63,7 @@ public class Crafting extends ComplexStateQuestHelper
 	ItemRequirement battleStaff, waterOrb, earthOrb, fireOrb, airOrb;
 	SkillRequirement c54, c58, c62, c66;
 
-	ItemRequirement greenLeather, blueLeather, redLeather, blackLeather;
+	ItemRequirement greenDhide, blueDhide, redDhide, blackDhide;
 	SkillRequirement c63, c71, c77, c84;
 
 	ItemRequirement moltenGlass, glassBlowingPipe;
@@ -102,7 +102,7 @@ public class Crafting extends ComplexStateQuestHelper
 		setupSteps();
 
 		ConditionalStep fullTraining = new ConditionalStep(this, craftLeatherGloves);
-
+		int skillLvl = client.getRealSkillLevel(Skill.CRAFTING);
 		Map<ItemRequirement, Boolean> uncutGems = new HashMap<ItemRequirement, Boolean>()
 		{{
 			put(uncutSapphire, false);
@@ -111,12 +111,12 @@ public class Crafting extends ComplexStateQuestHelper
 			put(uncutDiamond, false);
 			put(uncutDragonStone, false);
 		}};
-		Map<ItemRequirement, Boolean> leathers = new HashMap<ItemRequirement, Boolean>()
+		Map<ItemRequirement, Boolean> hides = new HashMap<ItemRequirement, Boolean>()
 		{{
-			put(greenLeather, false);
-			put(blueLeather, false);
-			put(redLeather, false);
-			put(blackLeather, false);
+			put(greenDhide, false);
+			put(blueDhide, false);
+			put(redDhide, false);
+			put(blackDhide, false);
 		}};
 		Map<ItemRequirement, Boolean> items = new HashMap<ItemRequirement, Boolean>()
 		{{
@@ -126,55 +126,27 @@ public class Crafting extends ComplexStateQuestHelper
 			put(smokeBattleStaff, false);
 			put(glassBlowingPipe, false);
 			put(moltenGlass, false);
-			put(uncutSapphire, false);
-			put(uncutEmerald, false);
-			put(uncutRuby, false);
-			put(uncutDiamond, false);
-			put(uncutDragonStone, false);
 			put(battleStaff, false);
 			put(leather, false);
-			put(greenLeather, false);
-			put(blueLeather, false);
-			put(redLeather, false);
-			put(blackLeather, false);
 			put(braceletMould, false);
 			put(goldBar, false);
 			put(silverBar, false);
 		}};
-		Map<ItemRequirement, Boolean> cutGems = new HashMap<ItemRequirement, Boolean>()
-		{{
-			put(sapphire, false);
-			put(emerald, false);
-			put(ruby, false);
-			put(diamond, false);
-			put(dragonStone, false);
-			put(opal, false);
-			put(jade, false);
-			put(topaz, false);
-		}};
 
-		cutGems.forEach((gem, value) ->
+		hides.forEach((hide, value) ->
 		{
-			if (gem.check(client))
+			if (hide.check(client))
 			{
-				cutGems.put(gem, true);
-			}
-		});
-
-		leathers.forEach((leather, value) ->
-		{
-			if (leather.check(client))
-			{
-				cutGems.put(leather, true);
+				hides.replace(hide, true);
 			}
 		});
 
 		//check to see if player has any uncut gems and sets value to true
-		uncutGems.forEach((gem, value) ->
+		uncutGems.forEach((uncutGem, value) ->
 		{
-			if (gem.check(client))
+			if (uncutGem.check(client))
 			{
-				uncutGems.put(gem, true);
+				uncutGems.replace(uncutGem, true);
 			}
 		});
 
@@ -183,7 +155,7 @@ public class Crafting extends ComplexStateQuestHelper
 		{
 			if (item.check(client))
 			{
-				items.put(item, true);
+				items.replace(item, true);
 			}
 		});
 
@@ -195,27 +167,10 @@ public class Crafting extends ComplexStateQuestHelper
 			}
 		}
 
-		if (items.get(glassBlowingPipe) && items.get(moltenGlass))
-		{
-			//only add steps if player does not have any uncut gems.
-			//prioritize leathers and gems
-			if (!leathers.containsValue(true) || !uncutGems.containsValue(true) || !cutGems.containsValue(true))
-			{
-				fullTraining.addStep(c87, blowLightOrb);
-				fullTraining.addStep(c49, blowLens);
-				fullTraining.addStep(c46, blowOrb);
-				fullTraining.addStep(c42, blowFishbowl);
-				fullTraining.addStep(c33, blowVial);
-				fullTraining.addStep(c12, blowOilLamp);
-				fullTraining.addStep(c4, blowCandleLantern);
-				fullTraining.addStep(c1, blowBeerGlass);
-			}
-		}
-
 		//any dragon leather?
-		if (items.get(greenLeather) || items.get(blueLeather) || items.get(redLeather) || items.get(blackLeather))
+		if (hides.get(greenDhide) || hides.get(blueDhide) || hides.get(redDhide) || hides.get(blackDhide))
 		{
-			if (client.getRealSkillLevel(Skill.CRAFTING) >= 63)
+			if (skillLvl >= 63)
 			{
 				fullTraining.addStep(c84, craftBlackHideBody);
 				fullTraining.addStep(c77, craftRedHideBody);
@@ -227,7 +182,7 @@ public class Crafting extends ComplexStateQuestHelper
 		// any battlestaves?
 		if (items.get(battleStaff))
 		{
-			if (client.getRealSkillLevel(Skill.CRAFTING) >= 54)
+			if (skillLvl >= 54)
 			{
 				fullTraining.addStep(c66, craftAirStaff);
 				fullTraining.addStep(c62, craftFireStaff);
@@ -237,9 +192,10 @@ public class Crafting extends ComplexStateQuestHelper
 		}
 
 		//any uncut gems?
-		if (items.get(uncutSapphire) || items.get(uncutEmerald) || items.get(uncutRuby) || items.get(uncutDiamond) || items.get(uncutDragonStone))
+		if (uncutGems.get(uncutSapphire) || uncutGems.get(uncutEmerald) || uncutGems.get(uncutRuby) ||
+			uncutGems.get(uncutDiamond) || uncutGems.get(uncutDragonStone))
 		{
-			if (client.getRealSkillLevel(Skill.CRAFTING) >= 20 && client.getRealSkillLevel(Skill.CRAFTING) <= 77)
+			if (skillLvl >= 20 && skillLvl <= 77)
 			{
 				fullTraining.addStep(c55, cutDragon);
 				fullTraining.addStep(c43, cutDiamond);
@@ -250,10 +206,11 @@ public class Crafting extends ComplexStateQuestHelper
 		}
 
 		//Does player have any gold or silver bars?
-		if (items.get(goldBar) && items.get(braceletMould) || items.get(silverBar) && items.get(braceletMould))
+		if (items.get(goldBar) && items.get(braceletMould) && skillLvl >= 7 ||
+			items.get(silverBar) && items.get(braceletMould) && skillLvl >= 7)
 		{
 			//We prioritize cutting gems or dhide bodies here.
-			if (!leathers.containsValue(true) && !uncutGems.containsValue(true) && cutGems.containsValue(true) && client.getRealSkillLevel(Skill.CRAFTING) >= 7)
+			if (!hides.containsValue(true) || !uncutGems.containsValue(true))
 			{
 				if (items.get(goldBar))
 				{
@@ -282,8 +239,30 @@ public class Crafting extends ComplexStateQuestHelper
 			fullTraining.addStep(c83, cutAmBolts);
 		}
 
+		if (items.get(glassBlowingPipe) && items.get(moltenGlass))
+		{
+			//only add steps if player does not have any uncut gems.
+			//prioritize leathers and gems
+			if (!uncutGems.containsValue(true))
+			{
+				if (!hides.containsValue(true) && skillLvl <= 63)
+				{
+					//Hides are available but skill level is not high enough.
+					// this code isnt reached
+					fullTraining.addStep(c87, blowLightOrb);
+					fullTraining.addStep(c49, blowLens);
+					fullTraining.addStep(c46, blowOrb);
+					fullTraining.addStep(c42, blowFishbowl);
+					fullTraining.addStep(c33, blowVial);
+					fullTraining.addStep(c12, blowOilLamp);
+					fullTraining.addStep(c4, blowCandleLantern);
+					fullTraining.addStep(c1, blowBeerGlass);
+				}
+			}
+
+		}
 		//If no other avenues of items are present this is triggered. or if your skill level is lower than 20.
-		if (items.get(leather) || client.getRealSkillLevel(Skill.CRAFTING) > 20)
+		if (items.get(leather) || skillLvl < 20)
 		{
 			fullTraining.addStep(c14, craftLeatherBody);
 			fullTraining.addStep(c11, craftLeatherVambs);
@@ -376,16 +355,16 @@ public class Crafting extends ComplexStateQuestHelper
 			new Conditions(c66, new Conditions(LogicType.NOR, c77))).alsoCheckBank(questBank);
 
 		//DHide Bodies
-		greenLeather = new ItemRequirement("Green d'hide Leather", ItemID.GREEN_DRAGON_LEATHER).showConditioned(
+		greenDhide = new ItemRequirement("Green dragonhide", ItemID.GREEN_DRAGONHIDE).showConditioned(
 			new Conditions(c63, new Conditions(LogicType.NOR, c71))).alsoCheckBank(questBank);
 
-		blueLeather = new ItemRequirement("Blue d'hide body", ItemID.BLUE_DRAGON_LEATHER).showConditioned(
+		blueDhide = new ItemRequirement("Blue dragonhide", ItemID.BLUE_DRAGONHIDE).showConditioned(
 			new Conditions(c71, new Conditions(LogicType.NOR, c77))).alsoCheckBank(questBank);
 
-		redLeather = new ItemRequirement("Red d'hide body", ItemID.RED_DRAGON_LEATHER).showConditioned(
+		redDhide = new ItemRequirement("Red dragonhide", ItemID.RED_DRAGONHIDE).showConditioned(
 			new Conditions(c77, new Conditions(LogicType.NOR, c84))).alsoCheckBank(questBank);
 
-		blackLeather = new ItemRequirement("Black d'hide body", ItemID.BLACK_DRAGON_LEATHER).showConditioned(
+		blackDhide = new ItemRequirement("Black dragonhide", ItemID.BLACK_DRAGONHIDE).showConditioned(
 			new Conditions(c84)).alsoCheckBank(questBank);
 
 		//Molten Glass
@@ -513,19 +492,19 @@ public class Crafting extends ComplexStateQuestHelper
 		//DHide Bodies
 		craftGreenHideBody = new DetailedQuestStep(this, String.format("63 - 71 Green d'hide bodies. x%s",
 			ActionsLeft.get(playerXp, skill, 63, 71, CraftingAction.GREEN_DHIDE_BODY.getXp())),
-			greenLeather, thread, needle, c63);
+			greenDhide, thread, needle, c63);
 
 		craftBlueHideBody = new DetailedQuestStep(this, String.format("71 - 77 Blue d'hide bodies. x%s",
 			ActionsLeft.get(playerXp, skill, 71, 77, CraftingAction.BLUE_DHIDE_BODY.getXp())),
-			blueLeather, thread, needle, c71);
+			blueDhide, thread, needle, c71);
 
 		craftRedHideBody = new DetailedQuestStep(this, String.format("77 - 84 Red d'hide bodies. x%s",
 			ActionsLeft.get(playerXp, skill, 77, 84, CraftingAction.RED_DHIDE_BODY.getXp())),
-			redLeather, thread, needle, c77);
+			redDhide, thread, needle, c77);
 
 		craftBlackHideBody = new DetailedQuestStep(this, String.format("84 - 99 Black d'hide bodies. x%s",
 			ActionsLeft.get(playerXp, skill, 84, 99, CraftingAction.BLACK_DHIDE_BODY.getXp())),
-			blackLeather, thread, needle, c84);
+			blackDhide, thread, needle, c84);
 
 		//Glassblowing
 		blowBeerGlass = new DetailedQuestStep(this, String.format("1 - 4 Beer glass. x%s",
@@ -632,8 +611,8 @@ public class Crafting extends ComplexStateQuestHelper
 	public List<ItemRequirement> getItemRequirements()
 	{
 		return Arrays.asList(needle, thread, leather, chisel, uncutSapphire, uncutEmerald, uncutRuby,
-			uncutDiamond, uncutDragonStone, battleStaff, waterOrb, earthOrb, fireOrb, airOrb, greenLeather, blueLeather,
-			redLeather, blackLeather, moltenGlass, glassBlowingPipe, braceletMould, goldBar, silverBar, opal, jade, topaz,
+			uncutDiamond, uncutDragonStone, battleStaff, waterOrb, earthOrb, fireOrb, airOrb, greenDhide, blueDhide,
+			redDhide, blackDhide, moltenGlass, glassBlowingPipe, braceletMould, goldBar, silverBar, opal, jade, topaz,
 			sapphire, emerald, ruby, diamond, dragonStone, astralRunes, giantSeaweed, bucketsOfSand, amethyst);
 	}
 
@@ -656,8 +635,8 @@ public class Crafting extends ComplexStateQuestHelper
 
 		allSteps.add(new PanelDetails("63 - 99: D'hide bodies", Arrays.asList(
 			craftGreenHideBody, craftBlueHideBody, craftRedHideBody, craftBlackHideBody),
-			needle, thread, greenLeather.quantity(3), blueLeather.quantity(3), redLeather.quantity(3),
-			blackLeather.quantity(3)));
+			needle, thread, greenDhide.quantity(3), blueDhide.quantity(3), redDhide.quantity(3),
+			blackDhide.quantity(3)));
 
 		allSteps.add(new PanelDetails("61 - 99: Superglass Make", Collections.singletonList(superGlassMake),
 			m77, c61, lunar,
