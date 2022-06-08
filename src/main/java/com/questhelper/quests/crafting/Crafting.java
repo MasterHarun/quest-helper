@@ -93,6 +93,7 @@ public class Crafting extends ComplexStateQuestHelper
 	QuestStep goldBrace, opalBrace, sapphireBrace, jadeBrace, emeraldBrace, topazBrace, rubyBrace, diamondBrace, dragonBrace;
 
 	QuestStep superGlassMake;
+
 	QuestStep cutAmBolts, cutAmArrows, cutAmJavs, cutAmDarts;
 
 	@Override
@@ -103,166 +104,187 @@ public class Crafting extends ComplexStateQuestHelper
 
 		ConditionalStep fullTraining = new ConditionalStep(this, craftLeatherGloves);
 		int skillLvl = client.getRealSkillLevel(Skill.CRAFTING);
-		Map<ItemRequirement, Boolean> uncutGems = new HashMap<ItemRequirement, Boolean>()
+
+		Map<ItemRequirement, Map<SkillRequirement, Boolean>> uncutGems = new HashMap<ItemRequirement, Map<SkillRequirement, Boolean>>()
 		{{
-			put(uncutSapphire, false);
-			put(uncutEmerald, false);
-			put(uncutRuby, false);
-			put(uncutDiamond, false);
-			put(uncutDragonStone, false);
+			put(uncutSapphire, new HashMap<SkillRequirement, Boolean>(){{ put(c20, false); }});
+			put(uncutEmerald, new HashMap<SkillRequirement, Boolean>(){{ put(c27, false); }});
+			put(uncutRuby, new HashMap<SkillRequirement, Boolean>(){{ put(c34, false); }});
+			put(uncutDiamond, new HashMap<SkillRequirement, Boolean>(){{ put(c43, false); }});
+			put(uncutDragonStone, new HashMap<SkillRequirement, Boolean>(){{ put(c55, false); }});
 		}};
-		Map<ItemRequirement, Boolean> hides = new HashMap<ItemRequirement, Boolean>()
+		Map<ItemRequirement, Map<SkillRequirement, Boolean>> hides = new HashMap<ItemRequirement, Map<SkillRequirement, Boolean>>()
 		{{
-			put(greenDhide, false);
-			put(blueDhide, false);
-			put(redDhide, false);
-			put(blackDhide, false);
+			put(greenDhide, new HashMap<SkillRequirement, Boolean>(){{ put(c63, false); }});
+			put(blueDhide, new HashMap<SkillRequirement, Boolean>(){{ put(c71, false); }});
+			put(redDhide, new HashMap<SkillRequirement, Boolean>(){{ put(c77, false); }});
+			put(blackDhide, new HashMap<SkillRequirement, Boolean>(){{ put(c84, false); }});
 		}};
-		Map<ItemRequirement, Boolean> items = new HashMap<ItemRequirement, Boolean>()
+		Map<ItemRequirement, Map<SkillRequirement, Boolean>> items = new HashMap<ItemRequirement, Map<SkillRequirement, Boolean>>()
 		{{
-			put(amethyst, false);
-			put(astralRunes, false);
-			put(bucketsOfSand, false);
-			put(smokeBattleStaff, false);
-			put(glassBlowingPipe, false);
-			put(moltenGlass, false);
-			put(battleStaff, false);
-			put(leather, false);
-			put(braceletMould, false);
-			put(goldBar, false);
-			put(silverBar, false);
+			put(leather, new HashMap<SkillRequirement, Boolean>(){{ put(c1, false); }});
+			put(moltenGlass, new HashMap<SkillRequirement, Boolean>(){{ put(c1, false); }});
+			put(glassBlowingPipe, new HashMap<SkillRequirement, Boolean>(){{ put(c1, false); }});
+			put(braceletMould, new HashMap<SkillRequirement, Boolean>(){{ put(c7, false); }});
+			put(goldBar, new HashMap<SkillRequirement, Boolean>(){{ put(c7, false); }});
+			put(silverBar, new HashMap<SkillRequirement, Boolean>(){{ put(c22, false); }});
+			put(battleStaff, new HashMap<SkillRequirement, Boolean>(){{ put(c54, false); }});
+			put(astralRunes, new HashMap<SkillRequirement, Boolean>(){{ put(c61, false); }});
+			put(bucketsOfSand, new HashMap<SkillRequirement, Boolean>(){{ put(c61, false); }});
+			put(smokeBattleStaff, new HashMap<SkillRequirement, Boolean>(){{ put(c61, false); }});
+			put(amethyst,  new HashMap<SkillRequirement, Boolean>(){{ put(c83, false); }});
 		}};
+
+		//Check the items. If the player has the item and the skill requirement set value to true.
+		items.forEach((item, value) ->
+		{
+			if (item.check(client))
+			{
+				value.forEach((skillReq, bool) ->
+				{
+					if (skillReq.getRequiredLevel() <= skillLvl)
+					{
+						value.replace(skillReq, true);
+					}
+				});
+			}
+		});
 
 		hides.forEach((hide, value) ->
 		{
 			if (hide.check(client))
 			{
-				hides.replace(hide, true);
+				value.forEach((skillReq, bool) ->
+				{
+					if (skillReq.getRequiredLevel() <= skillLvl)
+					{
+						value.replace(skillReq, true);
+					}
+				});
 			}
 		});
 
-		//check to see if player has any uncut gems and sets value to true
-		uncutGems.forEach((uncutGem, value) ->
+		uncutGems.forEach((hide, value) ->
 		{
-			if (uncutGem.check(client))
+			if (hide.check(client))
 			{
-				uncutGems.replace(uncutGem, true);
+				value.forEach((skillReq, bool) ->
+				{
+					if (skillReq.getRequiredLevel() <= skillLvl)
+					{
+						value.replace(skillReq, true);
+					}
+				});
 			}
 		});
 
-		//check to see if player has any item requirements and sets value to true
-		items.forEach((item, value) ->
+		//Superglass make reqs?
+		if (items.get(smokeBattleStaff).containsValue(true) && items.get(astralRunes).containsValue(true))
 		{
-			if (item.check(client))
-			{
-				items.replace(item, true);
-			}
-		});
-
-		if (items.get(smokeBattleStaff) && items.get(astralRunes))
-		{
-			if (items.get(bucketsOfSand) && items.get(giantSeaweed) && lunar.check(client))
+			if (items.get(bucketsOfSand).containsValue(true) && items.get(giantSeaweed).containsValue(true) && lunar.check(client))
 			{
 				fullTraining.addStep(c61, superGlassMake);
 			}
 		}
 
 		//any dragon leather?
-		if (hides.get(greenDhide) || hides.get(blueDhide) || hides.get(redDhide) || hides.get(blackDhide))
+		if (hides.get(greenDhide).containsValue(true) || hides.get(blueDhide).containsValue(true) || hides.get(redDhide).containsValue(true)
+			|| hides.get(blackDhide).containsValue(true))
 		{
-			if (skillLvl >= 63)
-			{
-				fullTraining.addStep(c84, craftBlackHideBody);
-				fullTraining.addStep(c77, craftRedHideBody);
-				fullTraining.addStep(c71, craftBlueHideBody);
-				fullTraining.addStep(c63, craftGreenHideBody);
-			}
+			fullTraining.addStep(c84, craftBlackHideBody);
+			fullTraining.addStep(c77, craftRedHideBody);
+			fullTraining.addStep(c71, craftBlueHideBody);
+			fullTraining.addStep(c63, craftGreenHideBody);
 		}
 
 		// any battlestaves?
-		if (items.get(battleStaff))
+		if (items.get(battleStaff).containsValue(true))
 		{
-			if (skillLvl >= 54)
-			{
-				fullTraining.addStep(c66, craftAirStaff);
-				fullTraining.addStep(c62, craftFireStaff);
-				fullTraining.addStep(c58, craftEarthStaff);
-				fullTraining.addStep(c54, craftWaterStaff);
-			}
+			fullTraining.addStep(c66, craftAirStaff);
+			fullTraining.addStep(c62, craftFireStaff);
+			fullTraining.addStep(c58, craftEarthStaff);
+			fullTraining.addStep(c54, craftWaterStaff);
 		}
 
 		//any uncut gems?
-		if (uncutGems.get(uncutSapphire) || uncutGems.get(uncutEmerald) || uncutGems.get(uncutRuby) ||
-			uncutGems.get(uncutDiamond) || uncutGems.get(uncutDragonStone))
+		if (uncutGems.get(uncutSapphire).containsValue(true) || uncutGems.get(uncutEmerald).containsValue(true) ||
+			uncutGems.get(uncutRuby).containsValue(true) || uncutGems.get(uncutDiamond).containsValue(true) ||
+			uncutGems.get(uncutDragonStone).containsValue(true))
 		{
-			if (skillLvl >= 20 && skillLvl <= 77)
-			{
-				fullTraining.addStep(c55, cutDragon);
-				fullTraining.addStep(c43, cutDiamond);
-				fullTraining.addStep(c34, cutRuby);
-				fullTraining.addStep(c27, cutEmerald);
-				fullTraining.addStep(c20, cutSapphire);
-			}
+			fullTraining.addStep(c55, cutDragon);
+			fullTraining.addStep(c43, cutDiamond);
+			fullTraining.addStep(c34, cutRuby);
+			fullTraining.addStep(c27, cutEmerald);
+			fullTraining.addStep(c20, cutSapphire);
 		}
 
 		//Does player have any gold or silver bars?
-		if (items.get(goldBar) && items.get(braceletMould) && skillLvl >= 7 ||
-			items.get(silverBar) && items.get(braceletMould) && skillLvl >= 7)
+		if (items.get(goldBar).containsValue(true) && items.get(braceletMould).containsValue(true) ||
+			items.get(silverBar).containsValue(true) && items.get(braceletMould).containsValue(true))
 		{
 			//We prioritize cutting gems or dhide bodies here.
-			if (!hides.containsValue(true) || !uncutGems.containsValue(true))
+			if (!uncutGems.get(uncutSapphire).containsValue(true) || !uncutGems.get(uncutEmerald).containsValue(true) ||
+				!uncutGems.get(uncutRuby).containsValue(true) || !uncutGems.get(uncutDiamond).containsValue(true) ||
+				!uncutGems.get(uncutDragonStone).containsValue(true))
 			{
-				if (items.get(goldBar))
+				if (!hides.get(greenDhide).containsValue(true) || !hides.get(blueDhide).containsValue(true) || !hides.get(redDhide).containsValue(true)
+					|| !hides.get(blackDhide).containsValue(true))
 				{
-					fullTraining.addStep(c74, dragonBrace);
-					fullTraining.addStep(c58, diamondBrace);
-					fullTraining.addStep(c42, rubyBrace);
-					fullTraining.addStep(c30, emeraldBrace);
-					fullTraining.addStep(c23, sapphireBrace);
-					fullTraining.addStep(c7, goldBrace);
+					//Gold or silver?
+					if (items.get(goldBar).containsValue(true))
+					{
+						fullTraining.addStep(c74, dragonBrace);
+						fullTraining.addStep(c58, diamondBrace);
+						fullTraining.addStep(c42, rubyBrace);
+						fullTraining.addStep(c30, emeraldBrace);
+						fullTraining.addStep(c23, sapphireBrace);
+						fullTraining.addStep(c7, goldBrace);
+					}
+					if (items.get(silverBar).containsValue(true))
+					{
+						fullTraining.addStep(c38, topazBrace);
+						fullTraining.addStep(c29, jadeBrace);
+						fullTraining.addStep(c22, opalBrace);
+					}
 				}
-				if (items.get(silverBar))
-				{
-					fullTraining.addStep(c38, topazBrace);
-					fullTraining.addStep(c29, jadeBrace);
-					fullTraining.addStep(c22, opalBrace);
-				}
-
 			}
 		}
 
-		if (items.get(amethyst))
+		//Amethyst?
+		if (items.get(amethyst).containsValue(true))
 		{
 			fullTraining.addStep(c89, cutAmDarts);
 			fullTraining.addStep(c87, cutAmJavs);
 			fullTraining.addStep(c85, cutAmArrows);
 			fullTraining.addStep(c83, cutAmBolts);
 		}
-
-		if (items.get(glassBlowingPipe) && items.get(moltenGlass))
+		//Glassblowing?
+		if (items.get(glassBlowingPipe).containsValue(true) && items.get(moltenGlass).containsValue(true))
 		{
-			//only add steps if player does not have any uncut gems.
-			//prioritize leathers and gems
-			if (!uncutGems.containsValue(true))
+			//prioritize gems, leathers, and bracelets
+			if (!uncutGems.get(uncutSapphire).containsValue(true) || !uncutGems.get(uncutEmerald).containsValue(true) ||
+				!uncutGems.get(uncutRuby).containsValue(true) || !uncutGems.get(uncutDiamond).containsValue(true) ||
+				!uncutGems.get(uncutDragonStone).containsValue(true))
 			{
-				if (!hides.containsValue(true) && skillLvl <= 63)
+				if (!hides.get(greenDhide).containsValue(true) || !hides.get(blueDhide).containsValue(true) || !hides.get(redDhide).containsValue(true)
+					|| !hides.get(blackDhide).containsValue(true))
 				{
-					//Hides are available but skill level is not high enough.
-					// this code isnt reached
-					fullTraining.addStep(c87, blowLightOrb);
-					fullTraining.addStep(c49, blowLens);
-					fullTraining.addStep(c46, blowOrb);
-					fullTraining.addStep(c42, blowFishbowl);
-					fullTraining.addStep(c33, blowVial);
-					fullTraining.addStep(c12, blowOilLamp);
-					fullTraining.addStep(c4, blowCandleLantern);
-					fullTraining.addStep(c1, blowBeerGlass);
+					if (!items.get(braceletMould).containsValue(true))
+					{
+						fullTraining.addStep(c87, blowLightOrb);
+						fullTraining.addStep(c49, blowLens);
+						fullTraining.addStep(c46, blowOrb);
+						fullTraining.addStep(c42, blowFishbowl);
+						fullTraining.addStep(c33, blowVial);
+						fullTraining.addStep(c12, blowOilLamp);
+						fullTraining.addStep(c4, blowCandleLantern);
+						fullTraining.addStep(c1, blowBeerGlass);
+					}
 				}
 			}
-
 		}
 		//If no other avenues of items are present this is triggered. or if your skill level is lower than 20.
-		if (items.get(leather) || skillLvl < 20)
+		if (items.get(leather).containsValue(true) || skillLvl < 20)
 		{
 			fullTraining.addStep(c14, craftLeatherBody);
 			fullTraining.addStep(c11, craftLeatherVambs);
@@ -274,6 +296,7 @@ public class Crafting extends ComplexStateQuestHelper
 
 	private void setupRequirements()
 	{
+		c1 = new SkillRequirement(Skill.CRAFTING, 1);
 		c4 = new SkillRequirement(Skill.CRAFTING, 4);
 		c7 = new SkillRequirement(Skill.CRAFTING, 7);
 		c9 = new SkillRequirement(Skill.CRAFTING, 9);

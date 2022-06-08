@@ -127,5 +127,4 @@ public class SkillRequirement extends AbstractRequirement
 
 		return returnText;
 	}
-
 }
