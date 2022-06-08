@@ -28,7 +28,6 @@ import com.questhelper.QuestDescriptor;
 import com.questhelper.QuestHelperQuest;
 import com.questhelper.panel.PanelDetails;
 import com.questhelper.questhelpers.ComplexStateQuestHelper;
-import com.questhelper.requirements.Requirement;
 import com.questhelper.requirements.conditional.Conditions;
 import com.questhelper.requirements.item.ItemRequirement;
 import com.questhelper.requirements.player.SkillRequirement;
@@ -122,28 +121,22 @@ public class Crafting extends ComplexStateQuestHelper
 		Map<ItemRequirement, Boolean> items = new HashMap<ItemRequirement, Boolean>()
 		{{
 			put(amethyst, false);
-
 			put(astralRunes, false);
 			put(bucketsOfSand, false);
 			put(smokeBattleStaff, false);
-
 			put(glassBlowingPipe, false);
 			put(moltenGlass, false);
-
 			put(uncutSapphire, false);
 			put(uncutEmerald, false);
 			put(uncutRuby, false);
 			put(uncutDiamond, false);
 			put(uncutDragonStone, false);
-
 			put(battleStaff, false);
 			put(leather, false);
-
 			put(greenLeather, false);
 			put(blueLeather, false);
 			put(redLeather, false);
 			put(blackLeather, false);
-
 			put(braceletMould, false);
 			put(goldBar, false);
 			put(silverBar, false);
@@ -155,7 +148,6 @@ public class Crafting extends ComplexStateQuestHelper
 			put(ruby, false);
 			put(diamond, false);
 			put(dragonStone, false);
-
 			put(opal, false);
 			put(jade, false);
 			put(topaz, false);
@@ -168,6 +160,7 @@ public class Crafting extends ComplexStateQuestHelper
 				cutGems.put(gem, true);
 			}
 		});
+
 		leathers.forEach((leather, value) ->
 		{
 			if (leather.check(client))
@@ -175,6 +168,7 @@ public class Crafting extends ComplexStateQuestHelper
 				cutGems.put(leather, true);
 			}
 		});
+
 		//check to see if player has any uncut gems and sets value to true
 		uncutGems.forEach((gem, value) ->
 		{
@@ -183,6 +177,7 @@ public class Crafting extends ComplexStateQuestHelper
 				uncutGems.put(gem, true);
 			}
 		});
+
 		//check to see if player has any item requirements and sets value to true
 		items.forEach((item, value) ->
 		{
@@ -191,6 +186,7 @@ public class Crafting extends ComplexStateQuestHelper
 				items.put(item, true);
 			}
 		});
+
 		if (items.get(smokeBattleStaff) && items.get(astralRunes))
 		{
 			if (items.get(bucketsOfSand) && items.get(giantSeaweed) && lunar.check(client))
@@ -215,6 +211,7 @@ public class Crafting extends ComplexStateQuestHelper
 				fullTraining.addStep(c1, blowBeerGlass);
 			}
 		}
+
 		//any dragon leather?
 		if (items.get(greenLeather) || items.get(blueLeather) || items.get(redLeather) || items.get(blackLeather))
 		{
@@ -226,6 +223,7 @@ public class Crafting extends ComplexStateQuestHelper
 				fullTraining.addStep(c63, craftGreenHideBody);
 			}
 		}
+
 		// any battlestaves?
 		if (items.get(battleStaff))
 		{
@@ -237,6 +235,7 @@ public class Crafting extends ComplexStateQuestHelper
 				fullTraining.addStep(c54, craftWaterStaff);
 			}
 		}
+
 		//any uncut gems?
 		if (items.get(uncutSapphire) || items.get(uncutEmerald) || items.get(uncutRuby) || items.get(uncutDiamond) || items.get(uncutDragonStone))
 		{
@@ -249,6 +248,7 @@ public class Crafting extends ComplexStateQuestHelper
 				fullTraining.addStep(c20, cutSapphire);
 			}
 		}
+
 		//Does player have any gold or silver bars?
 		if (items.get(goldBar) && items.get(braceletMould) || items.get(silverBar) && items.get(braceletMould))
 		{
@@ -273,6 +273,7 @@ public class Crafting extends ComplexStateQuestHelper
 
 			}
 		}
+
 		if (items.get(amethyst))
 		{
 			fullTraining.addStep(c89, cutAmDarts);
@@ -280,6 +281,7 @@ public class Crafting extends ComplexStateQuestHelper
 			fullTraining.addStep(c85, cutAmArrows);
 			fullTraining.addStep(c83, cutAmBolts);
 		}
+
 		//If no other avenues of items are present this is triggered. or if your skill level is lower than 20.
 		if (items.get(leather) || client.getRealSkillLevel(Skill.CRAFTING) > 20)
 		{
@@ -331,9 +333,9 @@ public class Crafting extends ComplexStateQuestHelper
 
 		lunar = new SpellbookRequirement(Spellbook.LUNAR);
 
-
 		//Leather
 		needle = new ItemRequirement("Needle", ItemID.NEEDLE).alsoCheckBank(questBank);
+
 		thread = new ItemRequirement("Thread", ItemID.THREAD).alsoCheckBank(questBank);
 
 		leather = new ItemRequirement("Leather", ItemID.LEATHER).showConditioned(
@@ -360,27 +362,35 @@ public class Crafting extends ComplexStateQuestHelper
 		// BattleStaves
 		battleStaff = new ItemRequirement("Battlestaff", ItemID.BATTLESTAFF).showConditioned(
 			new Conditions(c54, new Conditions(LogicType.NOR, c77))).alsoCheckBank(questBank);
+
 		waterOrb = new ItemRequirement("Water Orb", ItemID.WATER_ORB).showConditioned(
 			new Conditions(c54, new Conditions(LogicType.NOR, c58))).alsoCheckBank(questBank);
+
 		earthOrb = new ItemRequirement("Earth Orb", ItemID.EARTH_ORB).showConditioned(
 			new Conditions(c58, new Conditions(LogicType.NOR, c62))).alsoCheckBank(questBank);
+
 		fireOrb = new ItemRequirement("Fire Orb", ItemID.FIRE_ORB).showConditioned(
 			new Conditions(c62, new Conditions(LogicType.NOR, c66))).alsoCheckBank(questBank);
+
 		airOrb = new ItemRequirement("Air Orb", ItemID.AIR_ORB).showConditioned(
 			new Conditions(c66, new Conditions(LogicType.NOR, c77))).alsoCheckBank(questBank);
 
 		//DHide Bodies
 		greenLeather = new ItemRequirement("Green d'hide Leather", ItemID.GREEN_DRAGON_LEATHER).showConditioned(
 			new Conditions(c63, new Conditions(LogicType.NOR, c71))).alsoCheckBank(questBank);
+
 		blueLeather = new ItemRequirement("Blue d'hide body", ItemID.BLUE_DRAGON_LEATHER).showConditioned(
 			new Conditions(c71, new Conditions(LogicType.NOR, c77))).alsoCheckBank(questBank);
+
 		redLeather = new ItemRequirement("Red d'hide body", ItemID.RED_DRAGON_LEATHER).showConditioned(
 			new Conditions(c77, new Conditions(LogicType.NOR, c84))).alsoCheckBank(questBank);
+
 		blackLeather = new ItemRequirement("Black d'hide body", ItemID.BLACK_DRAGON_LEATHER).showConditioned(
 			new Conditions(c84)).alsoCheckBank(questBank);
 
 		//Molten Glass
 		moltenGlass = new ItemRequirement("Molten Glass", ItemID.MOLTEN_GLASS).alsoCheckBank(questBank);
+
 		glassBlowingPipe = new ItemRequirement("Glassblowing Pipe", ItemID.GLASSBLOWING_PIPE).alsoCheckBank(questBank);
 
 		//Crafting Bracelets
@@ -389,33 +399,45 @@ public class Crafting extends ComplexStateQuestHelper
 
 		goldBar = new ItemRequirement("Gold Bar", ItemID.GOLD_BAR).showConditioned(
 			new Conditions(c7)).alsoCheckBank(questBank);
+
 		sapphire = new ItemRequirement("Sapphire", ItemID.SAPPHIRE).showConditioned(
 			new Conditions(c23, new Conditions(LogicType.NOR, c30))).alsoCheckBank(questBank);
+
 		emerald = new ItemRequirement("Emerald", ItemID.EMERALD).showConditioned(
 			new Conditions(c30, new Conditions(LogicType.NOR, c42))).alsoCheckBank(questBank);
+
 		ruby = new ItemRequirement("Ruby", ItemID.RUBY).showConditioned(
 			new Conditions(c42, new Conditions(LogicType.NOR, c58))).alsoCheckBank(questBank);
+
 		diamond = new ItemRequirement("Diamond", ItemID.DIAMOND).showConditioned(
 			new Conditions(c58, new Conditions(LogicType.NOR, c74))).alsoCheckBank(questBank);
+
 		dragonStone = new ItemRequirement("Dragonstone", ItemID.DRAGONSTONE).showConditioned(
 			new Conditions(c74)).alsoCheckBank(questBank);
+
 		silverBar = new ItemRequirement("Silver Bar", ItemID.SILVER_BAR).showConditioned(
 			new Conditions(c22)).alsoCheckBank(questBank);
+
 		opal = new ItemRequirement("Opal", ItemID.OPAL).showConditioned(
 			new Conditions(c22, new Conditions(LogicType.NOR, c29))).alsoCheckBank(questBank);
+
 		jade = new ItemRequirement("Jade", ItemID.JADE).showConditioned(
 			new Conditions(c29, new Conditions(LogicType.NOR, c38))).alsoCheckBank(questBank);
+
 		topaz = new ItemRequirement("Red Topaz", ItemID.RED_TOPAZ).showConditioned(
 			new Conditions(c38, new Conditions(LogicType.NOR, c42))).alsoCheckBank(questBank);
 
 		//Superglass make
 		astralRunes = new ItemRequirement("Astral Runes", ItemID.ASTRAL_RUNE).showConditioned(
 			new Conditions(c77)).alsoCheckBank(questBank);
+
 		giantSeaweed = new ItemRequirement("Giant Seaweed", ItemID.GIANT_SEAWEED).showConditioned(
 			new Conditions(c61)).alsoCheckBank(questBank);
 		giantSeaweed.addAlternates(ItemID.SODA_ASH, ItemID.SEAWEED, ItemID.SWAMP_WEED);
+
 		bucketsOfSand = new ItemRequirement("Buckets of Sand", ItemID.BUCKET_OF_SAND).showConditioned(
 			new Conditions(c61)).alsoCheckBank(questBank);
+
 		smokeBattleStaff = new ItemRequirement("Smoke Battlestaff", ItemID.SMOKE_BATTLESTAFF).showConditioned(
 			new Conditions(m77)).alsoCheckBank(questBank);
 		smokeBattleStaff.addAlternates(ItemID.MYSTIC_SMOKE_STAFF);
