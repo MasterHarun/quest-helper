@@ -100,6 +100,8 @@ public class QuestOverviewPanel extends JPanel
 
 	private final List<QuestRequirementPanel> requirementPanels = new ArrayList<>();
 
+	private final List<SkillRequirementPanel> skillRequirementPanels = new ArrayList<>();
+
 	public QuestOverviewPanel(QuestHelperPlugin questHelperPlugin)
 	{
 		super();
@@ -374,7 +376,7 @@ public class QuestOverviewPanel extends JPanel
 		updateRequirementsPanels(questGeneralRequirementsHeader, questGeneralRequirementsListPanel, requirementPanels, quest.getGeneralRequirements());
 
 		/* Skill requirements */
-		updateSkillRequirementPanels(skillRequirementsHeader, skillRequirementsListPanel, requirementPanels, quest.getGeneralRequirements(), questHelperPlugin.getClient());
+		updateSkillRequirementPanels(skillRequirementsHeader, skillRequirementsListPanel, skillRequirementPanels, quest.getGeneralRequirements(), questHelperPlugin.getClient());
 
 		/* Non-item recommended */
 		updateRequirementsPanels(questGeneralRecommendedHeader, questGeneralRecommendedListPanel, requirementPanels, quest.getGeneralRecommended());
@@ -432,48 +434,18 @@ public class QuestOverviewPanel extends JPanel
 		}
 	}
 
-	private void updateSkillRequirementPanels(JPanel header, JPanel listPanel, List<QuestRequirementPanel> panels,  List<Requirement> requirements, Client client)
+	private void updateSkillRequirementPanels(JPanel header, JPanel listPanel, List<SkillRequirementPanel> panels,
+										  List<Requirement> requirements, Client client)
 	{
 		if (requirements != null)
 		{
-			for (Requirement skillReq : requirements)
+			for (Requirement generalRecommend : requirements)
 			{
-				if (skillReq instanceof SkillRequirement)
-				{
-					SkillRequirement skillRequirement = ((SkillRequirement) skillReq);
-					listPanel.setVisible(true);
-					header.setVisible(true);
-
-					JButton skillButton = new JButton();
-					skillButton.setUI(new BasicButtonUI());
-					SwingUtil.removeButtonDecorations(skillButton);
-					skillButton.setHorizontalAlignment(SwingConstants.LEFT);
-					skillButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
-					skillButton.addMouseListener(new java.awt.event.MouseAdapter()
-					{
-						public void mouseEntered(java.awt.event.MouseEvent evt)
-						{
-							skillButton.setToolTipText("Open the skill guide for " + skillRequirement.getSkill().toString().toLowerCase());
-							skillButton.setForeground(skillReq.getColor(client, questHelperPlugin.getConfig()));
-
-							if (skillButton.getText().length() > 0)
-							{
-								skillButton.addActionListener((ev ->
-								{
-									skillButton.setForeground(Color.cyan.brighter().brighter().brighter());
-									skillButton.setText("<html><body style = 'text-decoration:underline'>" + skillRequirement.getDisplayText() + "</body></html>");
-									questHelperPlugin.onSkillReqSelected(skillRequirement);
-								}
-								));
-							}
-						}
-						public void mouseExited(java.awt.event.MouseEvent evt)
-						{
-							skillButton.setText("<html><body>" + skillRequirement.getDisplayText() + "</body></html>");
-						};
-					});
-					skillRequirementsListPanel.add(skillButton);
-				}
+				SkillRequirementPanel reqPanel = new SkillRequirementPanel(generalRecommend, questHelperPlugin, client);
+				panels.add(reqPanel);
+				listPanel.add(new SkillRequirementWrapperPanel(reqPanel));
+				header.setVisible(true);
+				listPanel.setVisible(true);
 			}
 		}
 		else
@@ -482,7 +454,6 @@ public class QuestOverviewPanel extends JPanel
 			header.setVisible(false);
 		}
 	}
-
 	private void updateItemRequirementsPanels(JPanel listPanel, List<QuestRequirementPanel> panels,
 										  List<ItemRequirement> requirements)
 	{
@@ -505,6 +476,7 @@ public class QuestOverviewPanel extends JPanel
 			listPanel.add(itemRequiredLabel);
 		}
 	}
+
 
 	private void updateRewardsPanels(List<Reward> rewards)
 	{
