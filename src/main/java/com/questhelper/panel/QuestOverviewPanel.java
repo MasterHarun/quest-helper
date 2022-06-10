@@ -31,12 +31,10 @@ import com.questhelper.questhelpers.QuestHelper;
 import com.questhelper.requirements.Requirement;
 import com.questhelper.requirements.item.ItemRequirement;
 import com.questhelper.requirements.item.NoItemRequirement;
+import com.questhelper.requirements.player.SkillRequirement;
 import com.questhelper.rewards.Reward;
 import com.questhelper.steps.DetailedQuestStep;
 import com.questhelper.steps.QuestStep;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import net.runelite.api.Client;
 import net.runelite.api.Item;
 import net.runelite.client.ui.ColorScheme;
@@ -67,8 +65,8 @@ public class QuestOverviewPanel extends JPanel
 	private final JLabel questOverviewNotes = new JLabel();
 
 	private final JPanel questGeneralRequirementsListPanel = new JPanel();
+	private final JPanel skillRequirementsListPanel = new JPanel();
 	private final JPanel questGeneralRecommendedListPanel = new JPanel();
-
 	private final JPanel questItemRequirementsListPanel = new JPanel();
 	private final JPanel questItemRecommendedListPanel = new JPanel();
 	private final JPanel questCombatRequirementsListPanel = new JPanel();
@@ -79,6 +77,7 @@ public class QuestOverviewPanel extends JPanel
 	private final JPanel externalQuestResourcesPanel = new JPanel();
 
 	private final JPanel questGeneralRequirementsHeader = new JPanel();
+	private final JPanel skillRequirementsHeader = new JPanel();
 	private final JPanel questGeneralRecommendedHeader = new JPanel();
 	private final JPanel questItemRequirementsHeader = new JPanel();
 	private final JPanel questCombatRequirementHeader = new JPanel();
@@ -93,6 +92,7 @@ public class QuestOverviewPanel extends JPanel
 
 	private static final ImageIcon CLOSE_ICON = Icon.CLOSE.getIcon();
 	private static final ImageIcon INFO_ICON = Icon.INFO_ICON.getIcon();
+	private static final ImageIcon BACK = Icon.BACK.getIcon();
 
 	private final JButton collapseBtn = new JButton();
 
@@ -118,6 +118,15 @@ public class QuestOverviewPanel extends JPanel
 
 		final JPanel viewControls = new JPanel(new GridLayout(1, 3, 10, 0));
 		viewControls.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+
+		JButton previousBtn = new JButton();
+		SwingUtil.removeButtonDecorations(previousBtn);
+		previousBtn.setIcon(BACK);
+		previousBtn.setToolTipText("Go back");
+		previousBtn.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+		previousBtn.setUI(new BasicButtonUI());
+		previousBtn.addActionListener(ev -> questHelperPlugin.backToPrevQuest());
+		viewControls.add(previousBtn);
 
 		JButton closeBtn = new JButton();
 		SwingUtil.removeButtonDecorations(closeBtn);
@@ -154,6 +163,8 @@ public class QuestOverviewPanel extends JPanel
 
 		overviewPanel.add(generateRequirementPanel(questGeneralRequirementsListPanel,
 			questGeneralRequirementsHeader, "General requirements:"));
+		overviewPanel.add(generateRequirementPanel(skillRequirementsListPanel,
+			skillRequirementsHeader, "Skill requirements:"));
 		overviewPanel.add(generateRequirementPanel(questGeneralRecommendedListPanel,
 			questGeneralRecommendedHeader, "Recommended:"));
 		overviewPanel.add(generateRequirementPanel(questItemRequirementsListPanel,
@@ -329,6 +340,7 @@ public class QuestOverviewPanel extends JPanel
 		questStepsContainer.removeAll();
 		questGeneralRequirementsListPanel.removeAll();
 		questGeneralRecommendedListPanel.removeAll();
+		skillRequirementsListPanel.removeAll();
 		questItemRequirementsListPanel.removeAll();
 		questItemRecommendedListPanel.removeAll();
 		questCombatRequirementsListPanel.removeAll();
@@ -360,6 +372,9 @@ public class QuestOverviewPanel extends JPanel
 	{
 		/* Non-item requirements */
 		updateRequirementsPanels(questGeneralRequirementsHeader, questGeneralRequirementsListPanel, requirementPanels, quest.getGeneralRequirements());
+
+		/* Skill requirements */
+		updateSkillRequirementPanels(skillRequirementsHeader, skillRequirementsListPanel, requirementPanels, quest.getGeneralRequirements());
 
 		/* Non-item recommended */
 		updateRequirementsPanels(questGeneralRecommendedHeader, questGeneralRecommendedListPanel, requirementPanels, quest.getGeneralRecommended());
@@ -396,12 +411,69 @@ public class QuestOverviewPanel extends JPanel
 		{
 			for (Requirement generalRecommend : requirements)
 			{
-				QuestRequirementPanel reqPanel = new QuestRequirementPanel(generalRecommend);
-				panels.add(reqPanel);
-				listPanel.add(new QuestRequirementWrapperPanel(reqPanel));
+				if (!(generalRecommend instanceof SkillRequirement))
+				{
+					QuestRequirementPanel reqPanel = new QuestRequirementPanel(generalRecommend);
+					panels.add(reqPanel);
+					listPanel.add(new QuestRequirementWrapperPanel(reqPanel));
 
-				listPanel.setVisible(true);
-				header.setVisible(true);
+					listPanel.setVisible(true);
+					header.setVisible(true);
+				}
+
+			}
+		}
+		else
+		{
+			JLabel itemRequiredLabel = new JLabel();
+			itemRequiredLabel.setForeground(Color.GRAY);
+			itemRequiredLabel.setText("None");
+			listPanel.add(itemRequiredLabel);
+		}
+	}
+
+	private void updateSkillRequirementPanels(JPanel header, JPanel listPanel, List<QuestRequirementPanel> panels,  List<Requirement> requirements)
+	{
+		if (requirements != null)
+		{
+			for (Requirement skillReq : requirements)
+			{
+				if (skillReq instanceof SkillRequirement)
+				{
+					SkillRequirement skillRequirement = ((SkillRequirement) skillReq);
+					listPanel.setVisible(true);
+					header.setVisible(true);
+					//TODO: Update colors based on requirement met
+					JButton skillButton = new JButton();
+					skillButton.setUI(new BasicButtonUI());
+					SwingUtil.removeButtonDecorations(skillButton);
+					skillButton.setHorizontalAlignment(SwingConstants.LEFT);
+					skillButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
+					skillButton.addMouseListener(new java.awt.event.MouseAdapter()
+					{
+						public void mouseEntered(java.awt.event.MouseEvent evt)
+						{
+							skillButton.setToolTipText("Open the skill guide for " + skillRequirement.getSkill().toString().toLowerCase());
+							skillButton.setForeground(Color.cyan.brighter().brighter().brighter());
+
+							if (skillButton.getText().length() > 0)
+							{
+								skillButton.addActionListener((ev ->
+								{
+									skillButton.setText("<html><body style = 'text-decoration:underline'>" + skillRequirement.getDisplayText() + "</body></html>");
+									questHelperPlugin.onSkillReqSelected(skillRequirement);
+								}
+								));
+							}
+						}
+						public void mouseExited(java.awt.event.MouseEvent evt)
+						{
+							skillButton.setForeground(Color.LIGHT_GRAY);
+							skillButton.setText("<html><body>" + skillRequirement.getDisplayText() + "</body></html>");
+						};
+					});
+					skillRequirementsListPanel.add(skillButton);
+				}
 			}
 		}
 		else

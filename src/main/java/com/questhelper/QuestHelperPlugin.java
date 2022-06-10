@@ -44,6 +44,8 @@ import com.questhelper.overlays.QuestHelperWorldOverlay;
 import com.questhelper.panel.QuestHelperPanel;
 import com.questhelper.questhelpers.Quest;
 import com.questhelper.questhelpers.QuestHelper;
+import com.questhelper.requirements.Requirement;
+import com.questhelper.requirements.player.SkillRequirement;
 import com.questhelper.steps.QuestStep;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -68,6 +70,7 @@ import net.runelite.api.MenuAction;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.Player;
 import net.runelite.api.QuestState;
+import net.runelite.api.Skill;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.CommandExecuted;
@@ -211,7 +214,8 @@ public class QuestHelperPlugin extends Plugin
 
 	@Getter
 	private QuestHelper selectedQuest = null;
-
+	@Getter
+	private QuestHelper previousQuest = null;
 	@Getter
 	@Inject
 	@Named("developerMode")
@@ -621,6 +625,31 @@ public class QuestHelperPlugin extends Plugin
 			}
 		}
 	}
+	public void onSkillReqSelected(Requirement selectedSkillQuest)
+	{
+		Skill skillStorage = (((SkillRequirement) selectedSkillQuest).getSkill());
+		String skillName = skillStorage.getName();
+		QuestHelper skillQuest = quests.get(skillName);
+		if (skillQuest != null)
+		{
+			clientThread.invokeLater(() ->
+			{
+				startUpQuest(skillQuest);
+			});
+		}
+	}
+
+	public void backToPrevQuest()
+	{
+		if (previousQuest != null)
+		{
+			clientThread.invokeLater(() ->
+			{
+				startUpQuest(previousQuest);
+				previousQuest = null;
+			});
+		}
+	}
 
 	private void displayPanel()
 	{
@@ -651,6 +680,11 @@ public class QuestHelperPlugin extends Plugin
 		if (!(client.getGameState() == GameState.LOGGED_IN))
 		{
 			return;
+		}
+
+		if (previousQuest == null)
+		{
+			previousQuest = this.selectedQuest;
 		}
 
 		shutDownQuest(true);
@@ -691,6 +725,7 @@ public class QuestHelperPlugin extends Plugin
 		if (selectedQuest != null)
 		{
 			selectedQuest.shutDown();
+			previousQuest = null;
 			bankTagsMain.shutDown();
 			SwingUtilities.invokeLater(() -> panel.removeQuest());
 			eventBus.unregister(selectedQuest);
