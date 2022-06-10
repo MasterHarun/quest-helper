@@ -374,7 +374,7 @@ public class QuestOverviewPanel extends JPanel
 		updateRequirementsPanels(questGeneralRequirementsHeader, questGeneralRequirementsListPanel, requirementPanels, quest.getGeneralRequirements());
 
 		/* Skill requirements */
-		updateSkillRequirementPanels(skillRequirementsHeader, skillRequirementsListPanel, requirementPanels, quest.getGeneralRequirements());
+		updateSkillRequirementPanels(skillRequirementsHeader, skillRequirementsListPanel, requirementPanels, quest.getGeneralRequirements(), questHelperPlugin.getClient());
 
 		/* Non-item recommended */
 		updateRequirementsPanels(questGeneralRecommendedHeader, questGeneralRecommendedListPanel, requirementPanels, quest.getGeneralRecommended());
@@ -432,7 +432,7 @@ public class QuestOverviewPanel extends JPanel
 		}
 	}
 
-	private void updateSkillRequirementPanels(JPanel header, JPanel listPanel, List<QuestRequirementPanel> panels,  List<Requirement> requirements)
+	private void updateSkillRequirementPanels(JPanel header, JPanel listPanel, List<QuestRequirementPanel> panels,  List<Requirement> requirements, Client client)
 	{
 		if (requirements != null)
 		{
@@ -443,7 +443,7 @@ public class QuestOverviewPanel extends JPanel
 					SkillRequirement skillRequirement = ((SkillRequirement) skillReq);
 					listPanel.setVisible(true);
 					header.setVisible(true);
-					//TODO: Update colors based on requirement met
+
 					JButton skillButton = new JButton();
 					skillButton.setUI(new BasicButtonUI());
 					SwingUtil.removeButtonDecorations(skillButton);
@@ -454,12 +454,13 @@ public class QuestOverviewPanel extends JPanel
 						public void mouseEntered(java.awt.event.MouseEvent evt)
 						{
 							skillButton.setToolTipText("Open the skill guide for " + skillRequirement.getSkill().toString().toLowerCase());
-							skillButton.setForeground(Color.cyan.brighter().brighter().brighter());
+							skillButton.setForeground(skillReq.getColor(client, questHelperPlugin.getConfig()));
 
 							if (skillButton.getText().length() > 0)
 							{
 								skillButton.addActionListener((ev ->
 								{
+									skillButton.setForeground(Color.cyan.brighter().brighter().brighter());
 									skillButton.setText("<html><body style = 'text-decoration:underline'>" + skillRequirement.getDisplayText() + "</body></html>");
 									questHelperPlugin.onSkillReqSelected(skillRequirement);
 								}
@@ -468,7 +469,6 @@ public class QuestOverviewPanel extends JPanel
 						}
 						public void mouseExited(java.awt.event.MouseEvent evt)
 						{
-							skillButton.setForeground(Color.LIGHT_GRAY);
 							skillButton.setText("<html><body>" + skillRequirement.getDisplayText() + "</body></html>");
 						};
 					});
