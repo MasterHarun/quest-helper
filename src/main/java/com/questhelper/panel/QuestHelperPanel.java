@@ -484,6 +484,11 @@ public class QuestHelperPanel extends PluginPanel
 		revalidate();
 	}
 
+	public void updatePrevBtn()
+	{
+		questOverviewPanel.updatePrevBtn();
+	}
+
 	public void updateLocks()
 	{
 		questOverviewPanel.updateLocks();

@@ -127,7 +127,12 @@ public class QuestOverviewPanel extends JPanel
 		previousBtn.setToolTipText("Go back");
 		previousBtn.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 		previousBtn.setUI(new BasicButtonUI());
-		previousBtn.addActionListener(ev -> questHelperPlugin.backToPrevQuest());
+		previousBtn.addActionListener(ev -> backHelper());
+
+		if (questHelperPlugin.getPreviousQuest() == null)
+		{
+			previousBtn.setVisible(false);
+		}
 		viewControls.add(previousBtn);
 
 		JButton closeBtn = new JButton();
@@ -235,6 +240,7 @@ public class QuestOverviewPanel extends JPanel
 		{
 			questNameLabel.setText(quest.getQuest().getName());
 			actionsContainer.setVisible(true);
+			updatePrevBtn();
 
 			setupQuestRequirements(quest);
 			introPanel.setVisible(true);
@@ -302,7 +308,7 @@ public class QuestOverviewPanel extends JPanel
 				boolean highlighted = false;
 				panel.setLockable(panel.panelDetails.getLockingQuestSteps() != null &&
 					(panel.panelDetails.getVars() == null || panel.panelDetails.getVars().contains(currentQuest.getVar())));
-				
+
 				for (QuestStep step : panel.getSteps())
 				{
 					if (step == newStep || step.getSubsteps().contains(newStep))
@@ -356,6 +362,31 @@ public class QuestOverviewPanel extends JPanel
 	private void closeHelper()
 	{
 		questHelperPlugin.shutDownQuestFromSidebar();
+	}
+
+	private void backHelper()
+	{
+		questHelperPlugin.backToPrevQuest();
+	}
+
+	public void updatePrevBtn()
+	{
+		if (questHelperPlugin.getPreviousQuest() != null)
+		{
+			if (actionsContainer.getComponents()[0].getComponentAt(0,0) != null)
+			{
+				actionsContainer.getComponents()[0].getComponentAt(0,0).setVisible(true);
+			}
+		}
+		else
+		{
+			if (actionsContainer.getComponents()[0].getComponentAt(0,0) != null)
+			{
+				actionsContainer.getComponents()[0].getComponentAt(0,0).setVisible(false);
+			}
+		}
+		actionsContainer.repaint();
+		actionsContainer.revalidate();
 	}
 
 	void updateCollapseText()

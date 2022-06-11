@@ -92,9 +92,6 @@ public class SkillRequirementPanel extends JPanel
 			setPreferredSize(label.getSize());
 
 			add(label.add(addClickableSkillButton(skillRequirement, questHelperPlugin, client)), BorderLayout.WEST);
-			validate();
-			revalidate();
-
 		}
 
 		if (requirement.getTooltip() != null)

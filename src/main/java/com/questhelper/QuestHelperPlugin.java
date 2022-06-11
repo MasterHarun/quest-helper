@@ -632,6 +632,8 @@ public class QuestHelperPlugin extends Plugin
 		QuestHelper skillQuest = quests.get(skillName);
 		if (skillQuest != null)
 		{
+			previousQuest = this.selectedQuest;
+			panel.updatePrevBtn();
 			clientThread.invokeLater(() ->
 			{
 				startUpQuest(skillQuest);
@@ -647,6 +649,7 @@ public class QuestHelperPlugin extends Plugin
 			{
 				startUpQuest(previousQuest);
 				previousQuest = null;
+				panel.updatePrevBtn();
 			});
 		}
 	}
@@ -681,7 +684,6 @@ public class QuestHelperPlugin extends Plugin
 		{
 			return;
 		}
-
 		if (previousQuest == null)
 		{
 			previousQuest = this.selectedQuest;
@@ -725,11 +727,16 @@ public class QuestHelperPlugin extends Plugin
 		if (selectedQuest != null)
 		{
 			selectedQuest.shutDown();
-			previousQuest = null;
 			bankTagsMain.shutDown();
 			SwingUtilities.invokeLater(() -> panel.removeQuest());
 			eventBus.unregister(selectedQuest);
 			selectedQuest = null;
+		}
+		if (previousQuest != null)
+		{
+			previousQuest.shutDown();
+			eventBus.unregister(previousQuest);
+			previousQuest = null;
 		}
 	}
 
