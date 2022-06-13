@@ -36,10 +36,14 @@ import com.questhelper.QuestHelperQuest;
 import com.questhelper.panel.PanelDetails;
 import com.questhelper.requirements.item.ItemRequirement;
 import com.questhelper.requirements.Requirement;
+import com.questhelper.requirements.player.SkillRequirement;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import javax.inject.Inject;
 
@@ -282,6 +286,88 @@ public abstract class QuestHelper implements Module, QuestDebugRenderer
 		}
 
 		return rewards;
+	}
+
+//	public boolean toolCheck(List<ItemRequirement> items)
+//	{
+//		for (ItemRequirement item : items)
+//		{
+//			if (item.check(client))
+//			{
+//				return false;
+//			}
+//		}
+////		items.forEach(itemRequirement -> {
+////			itemRequirement.check(client);
+////		});
+//
+//		return true;
+//	}
+//	public boolean toolCheck(LinkedHashMap<ItemRequirement, Boolean> tools)
+//	{
+//		Iterator<Map.Entry<ItemRequirement, Boolean>> toolItr = tools.entrySet().iterator();
+//		while (toolItr.hasNext())
+//		{
+//			Map.Entry<ItemRequirement, Boolean> entry = toolItr.next();
+//			if (entry.getKey().check(client))
+//			{
+//				tools.replace(entry.getKey(), true);
+//			}
+//
+//		}
+//
+//		if (tools.containsValue(true))
+//		{
+//			return true;
+//		}
+//		else
+//		{
+//			return false;
+//		}
+//
+//	}
+	public ItemRequirement skillToolLvlChecker(int skillLevel, LinkedHashMap<SkillRequirement, ItemRequirement> reqs)
+	{
+		LinkedHashMap<Integer, String> alternateTools = new LinkedHashMap<>();
+		Iterator<Map.Entry<SkillRequirement, ItemRequirement>> reqItr = reqs.entrySet().iterator();
+		ItemRequirement tool = reqs.get(0);
+		while(reqItr.hasNext())
+		{
+			Map.Entry<SkillRequirement, ItemRequirement> entry = reqItr.next();
+			if (entry.getKey().getRequiredLevel() <= skillLevel)
+			{
+				//Any alternative items?
+				if (!entry.getValue().getAlternativeItems().isEmpty())
+				{
+					ItemRequirement item;
+					item = entry.getValue();
+					item = item.alsoCheckBank(questBank);
+					//Do we have the required item?
+					if (item.check(client))
+					{
+						tool = entry.getValue();
+					}
+					else
+					{
+						//Choose alternative item
+						alternateTools = entry.getValue().getAlternativeItems();
+						Iterator<Map.Entry<Integer, String>> altItr = alternateTools.entrySet().iterator();
+						while (altItr.hasNext())
+						{
+							Map.Entry<Integer, String> altEntry = altItr.next();
+							Integer value = altEntry.getKey();
+							String name = altEntry.getValue();
+							tool = new ItemRequirement(name, value);
+						}
+					}
+				}
+				else
+				{
+					tool = entry.getValue();
+				}
+			}
+		}
+		return tool;
 	}
 
 	public List<ExternalQuestResources> getExternalResources(){ return null; }

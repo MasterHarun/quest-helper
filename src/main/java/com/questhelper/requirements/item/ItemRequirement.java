@@ -37,6 +37,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -70,8 +71,11 @@ public class ItemRequirement extends AbstractRequirement
 	@Setter
 	protected boolean highlightInInventory;
 
+	@Getter
 	protected final List<Integer> alternateItems = new ArrayList<>();
 
+	@Getter
+	protected final LinkedHashMap<Integer, String> alternativeItems = new LinkedHashMap<>();
 	@Setter
 	protected boolean exclusiveToOneItemType;
 
@@ -129,6 +133,11 @@ public class ItemRequirement extends AbstractRequirement
 		this(name, items.get(0), quantity);
 		this.equip = equip;
 		this.addAlternates(items.subList(1, items.size()));
+	}
+
+	public void addAlternatives(Integer alternateItem, String itemName)
+	{
+		this.alternativeItems.put(alternateItem, itemName);
 	}
 
 	public void addAlternates(List<Integer> alternates)
