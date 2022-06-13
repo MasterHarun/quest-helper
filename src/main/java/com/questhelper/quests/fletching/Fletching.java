@@ -36,7 +36,9 @@ import com.questhelper.requirements.util.LogicType;
 import com.questhelper.rewards.UnlockReward;
 import com.questhelper.steps.ConditionalStep;
 import com.questhelper.steps.DetailedQuestStep;
+import com.questhelper.steps.ObjectStep;
 import com.questhelper.steps.QuestStep;
+import com.questhelper.steps.SkillStep;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,8 +58,9 @@ public class Fletching extends ComplexStateQuestHelper
 
 	ItemRequirement celastrusBarks, redwoodLogs;
 
-	SkillRequirement fl5, fl10, fl20, fl25, fl35, fl40, fl50, fl55, fl65, fl70, fl80, fl85, fl92;
+	SkillRequirement fl1, fl5, fl10, fl20, fl25, fl35, fl40, fll40, fl50, fl55, fl65, fl70, fl80, fl85, fl92;
 
+	QuestStep acquireKnife;
 	QuestStep fletchArrowShafts;
 
 	QuestStep fletchShortBows, fletchLongBows, fletchOakShort, fletchOakLong, fletchWillowShort, fletchWillowLong,
@@ -65,34 +68,36 @@ public class Fletching extends ComplexStateQuestHelper
 
 	QuestStep fletchBattlestaves, fletchRedwoodShields;
 
+	int skillLvl;
 	@Override
 	public QuestStep loadStep()
 	{
 		setupRequirements();
 		setupSteps();
 
-		ConditionalStep fullTraining = new ConditionalStep(this, fletchArrowShafts);
-		if (redwoodLogs.check(client))
-		{
+		SkillStep fullTraining = new SkillStep(this, acquireKnife);
+//		ConditionalStep fullTraining = new ConditionalStep(this, fletchArrowShafts);
+//		if (redwoodLogs.check(client))
+//		{
 			fullTraining.addStep(fl92, fletchRedwoodShields);
-		}
-		else
-		{
+//		}
+//		else
+//		{
 			fullTraining.addStep(fl85, fletchMagicLong);
-		}
+//		}
 		fullTraining.addStep(fl80, fletchMagicShort);
 		fullTraining.addStep(fl70, fletchYewLong);
 		fullTraining.addStep(fl65, fletchYewShort);
 		fullTraining.addStep(fl55, fletchMapleLong);
 		fullTraining.addStep(fl50, fletchMapleShort);
-		if (celastrusBarks.check(client))
-		{
-			fullTraining.addStep(fl40, fletchBattlestaves);
-		}
-		else
-		{
+//		if (celastrusBarks.check(client))
+//		{
+			fullTraining.addStep(fll40, fletchBattlestaves);
+//		}
+//		else
+//		{
 			fullTraining.addStep(fl40, fletchWillowLong);
-		}
+//		}
 		fullTraining.addStep(fl35, fletchWillowShort);
 		fullTraining.addStep(fl25, fletchOakLong);
 		fullTraining.addStep(fl20, fletchOakShort);
@@ -105,12 +110,13 @@ public class Fletching extends ComplexStateQuestHelper
 
 	private void setupRequirements()
 	{
-
+		fl1 = new SkillRequirement(Skill.FLETCHING, 1);
 		fl5 = new SkillRequirement(Skill.FLETCHING, 5);
 		fl10 = new SkillRequirement(Skill.FLETCHING, 10);
 		fl20 = new SkillRequirement(Skill.FLETCHING, 20);
 		fl25 = new SkillRequirement(Skill.FLETCHING, 25);
 		fl35 = new SkillRequirement(Skill.FLETCHING, 35);
+		fll40 = new SkillRequirement(Skill.FLETCHING, 40);
 		fl40 = new SkillRequirement(Skill.FLETCHING, 40);
 		fl50 = new SkillRequirement(Skill.FLETCHING, 50);
 		fl55 = new SkillRequirement(Skill.FLETCHING, 55);
@@ -174,6 +180,8 @@ public class Fletching extends ComplexStateQuestHelper
 	{
 		float playerXp = client.getSkillExperience(Skill.FLETCHING);
 		int skill = client.getRealSkillLevel(Skill.FLETCHING);
+
+		acquireKnife = new ObjectStep(this,ItemID.KNIFE,"Get a new knife");
 
 		fletchArrowShafts = new DetailedQuestStep(this, String.format("Fletch Arrow shafts to 5. x%s",
 			ActionsLeft.get(playerXp, skill, 1, 5, FletchingAction.ARROW_SHAFT.getXp() * 15)),
@@ -254,6 +262,13 @@ public class Fletching extends ComplexStateQuestHelper
 	public List<PanelDetails> getPanels()
 	{
 		List<PanelDetails> allSteps = new ArrayList<>();
+
+		allSteps.add(new PanelDetails("Get a knife", Collections.singletonList(acquireKnife), knife));
+
+		if (knife.check(client))
+		{
+			allSteps.get(0).setHideCondition(knife);
+		}
 
 		allSteps.add(new PanelDetails("1 - 5/10 Fletch Arrow shafts", Collections.singletonList(fletchArrowShafts),
 			knife, logs));
