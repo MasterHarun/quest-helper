@@ -25,6 +25,7 @@
 package com.questhelper.panel;
 
 import com.questhelper.requirements.Requirement;
+import com.questhelper.steps.DetailedSkillStep;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -198,6 +199,22 @@ public class QuestStepPanel extends JPanel
 
 		step.getText().forEach(line -> text.append(line).append(" "));
 
+		return "<html><body style = 'text-align:left'>" + text + "</body></html>";
+	}
+
+	public String generateSkillText(QuestStep step)
+	{
+		StringBuilder text = new StringBuilder();
+		if (step instanceof DetailedSkillStep)
+		{
+			String actions = ((DetailedSkillStep) step).getActionsRemaining();
+			if (actions != null)
+			{
+				step.getText().forEach(line -> text.append(line).append(" x").append(actions));
+				return "<html><body style = 'text-align:left'>" + text + "</body></html>";
+			}
+			step.getText().forEach(line -> text.append(line).append(" "));
+		}
 		return "<html><body style = 'text-align:left'>" + text + "</body></html>";
 	}
 

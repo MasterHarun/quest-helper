@@ -64,7 +64,7 @@ public class Woodcutting extends ComplexStateQuestHelper
 
 	QuestStep acquireNewAxe, chopNormalTree, chopOakTrees, chopTeakTrees;
 
-	int skillLvl;
+	private int skillLvl;
 
 	private LinkedHashMap<SkillRequirement, ItemRequirement> tools;
 
@@ -79,10 +79,6 @@ public class Woodcutting extends ComplexStateQuestHelper
 		setupRequirements();
 		setupSteps();
 
-//		ConditionalStep fullTraining = new ConditionalStep(this, chopNormalTree);
-//		fullTraining.addStep(wc35, chopTeakTrees);
-//		fullTraining.addStep(wc15, chopOakTrees);
-//
 		SkillStep fullTrain = new SkillStep(this, acquireNewAxe);
 		fullTrain.addStep(wc35, chopTeakTrees);
 		fullTrain.addStep(wc15, chopOakTrees);
@@ -125,7 +121,6 @@ public class Woodcutting extends ComplexStateQuestHelper
 		dragonAxe = new ItemRequirement("Dragon axe", ItemID.DRAGON_AXE).showConditioned(
 			new Conditions(wc61)
 		);
-		dragonAxe.addAlternatives(ItemID.RUNE_AXE, "Rune axe");
 
 		tools.put(wc1, ironAxe);
 		tools.put(wc6, steelAxe);
