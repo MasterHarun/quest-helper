@@ -109,7 +109,7 @@ public class SkillStep extends QuestStep implements OwnerStep
 
 			if (entry.getKey() != null)
 			{
-				for (Requirement req : entry.getValue().getRequirements())
+				for (Requirement req : ((DetailedSkillStep) entry.getValue()).getRequirements())
 				{
 					if (req instanceof ItemRequirement)
 					{

@@ -142,7 +142,6 @@ public class Mining extends ComplexStateQuestHelper
 		dragonPickAxe = new ItemRequirement("Dragon Pickaxe", ItemID.DRAGON_PICKAXE).showConditioned(
 			new Conditions(m61)
 		);
-		dragonPickAxe.addAlternatives(ItemID.RUNE_PICKAXE, "Rune Pickaxe");
 
 		tools.put(m1,ironPickAxe);
 		tools.put(m6, steelPickAxe);

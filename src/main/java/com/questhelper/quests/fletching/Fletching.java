@@ -31,11 +31,9 @@ import com.questhelper.questhelpers.ComplexStateQuestHelper;
 import com.questhelper.requirements.conditional.Conditions;
 import com.questhelper.requirements.item.ItemRequirement;
 import com.questhelper.requirements.player.SkillRequirement;
-import com.questhelper.requirements.util.ActionsLeft;
 import com.questhelper.requirements.util.LogicType;
 import com.questhelper.rewards.UnlockReward;
-import com.questhelper.steps.ConditionalStep;
-import com.questhelper.steps.DetailedQuestStep;
+import com.questhelper.steps.DetailedSkillStep;
 import com.questhelper.steps.ObjectStep;
 import com.questhelper.steps.QuestStep;
 import com.questhelper.steps.SkillStep;
@@ -43,8 +41,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import lombok.Getter;
 import net.runelite.api.ItemID;
 import net.runelite.api.Skill;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.plugins.skillcalculator.skills.FletchingAction;
 
 @QuestDescriptor(
@@ -68,42 +68,29 @@ public class Fletching extends ComplexStateQuestHelper
 
 	QuestStep fletchBattlestaves, fletchRedwoodShields;
 
-	int skillLvl;
 	@Override
 	public QuestStep loadStep()
 	{
+
 		setupRequirements();
 		setupSteps();
 
 		SkillStep fullTraining = new SkillStep(this, acquireKnife);
-//		ConditionalStep fullTraining = new ConditionalStep(this, fletchArrowShafts);
-//		if (redwoodLogs.check(client))
-//		{
-			fullTraining.addStep(fl92, fletchRedwoodShields);
-//		}
-//		else
-//		{
-			fullTraining.addStep(fl85, fletchMagicLong);
-//		}
+
+		fullTraining.addStep(fl92, fletchRedwoodShields);
+		fullTraining.addStep(fl85, fletchMagicLong);
 		fullTraining.addStep(fl80, fletchMagicShort);
 		fullTraining.addStep(fl70, fletchYewLong);
 		fullTraining.addStep(fl65, fletchYewShort);
 		fullTraining.addStep(fl55, fletchMapleLong);
 		fullTraining.addStep(fl50, fletchMapleShort);
-//		if (celastrusBarks.check(client))
-//		{
-			fullTraining.addStep(fll40, fletchBattlestaves);
-//		}
-//		else
-//		{
-			fullTraining.addStep(fl40, fletchWillowLong);
-//		}
+		fullTraining.addStep(fll40, fletchBattlestaves);
+		fullTraining.addStep(fl40, fletchWillowLong);
 		fullTraining.addStep(fl35, fletchWillowShort);
 		fullTraining.addStep(fl25, fletchOakLong);
 		fullTraining.addStep(fl20, fletchOakShort);
 		fullTraining.addStep(fl10, fletchLongBows);
 		fullTraining.addStep(fl5, fletchShortBows);
-
 
 		return fullTraining;
 	}
@@ -178,69 +165,66 @@ public class Fletching extends ComplexStateQuestHelper
 
 	private void setupSteps()
 	{
-		float playerXp = client.getSkillExperience(Skill.FLETCHING);
-		int skill = client.getRealSkillLevel(Skill.FLETCHING);
+		Skill skill = Skill.FLETCHING;
+		acquireKnife = new ObjectStep(this, ItemID.KNIFE, "Get a new knife");
 
-		acquireKnife = new ObjectStep(this,ItemID.KNIFE,"Get a new knife");
-
-		fletchArrowShafts = new DetailedQuestStep(this, String.format("Fletch Arrow shafts to 5. x%s",
-			ActionsLeft.get(playerXp, skill, 1, 5, FletchingAction.ARROW_SHAFT.getXp() * 15)),
+		fletchArrowShafts = new DetailedSkillStep(this, "Fletch Arrow shafts to 5.", skill, 1, 5,
+			FletchingAction.ARROW_SHAFT.getXp() * 15,
 			knife, logs);
 
-		fletchShortBows = new DetailedQuestStep(this, String.format("5 - 10 Shortbows. x%s",
-			ActionsLeft.get(playerXp, skill, 5, 10, FletchingAction.SHORTBOW.getXp())),
+		fletchShortBows = new DetailedSkillStep(this, "5 - 10 Shortbows.", skill, 5, 10,
+			FletchingAction.SHORTBOW.getXp(),
 			knife, logs, fl5);
 
-		fletchLongBows = new DetailedQuestStep(this, String.format("10 - 20 Longbows. x%s",
-			ActionsLeft.get(playerXp, skill, 10, 20, FletchingAction.LONGBOW.getXp())),
+		fletchLongBows = new DetailedSkillStep(this, "10 - 20 Longbows.", skill, 10, 20,
+			FletchingAction.LONGBOW.getXp(),
 			knife, logs, bowString.quantity(-1), fl10);
 
-		fletchOakShort = new DetailedQuestStep(this, String.format("20 - 25 Oak Shortbows. x%s",
-			ActionsLeft.get(playerXp, skill, 20, 25, FletchingAction.OAK_SHORTBOW.getXp())),
+		fletchOakShort = new DetailedSkillStep(this, "20 - 25 Oak Shortbows.", skill, 20, 25,
+			FletchingAction.OAK_SHORTBOW.getXp(),
 			knife, oakLogs, bowString.quantity(-1), fl20);
 
-		fletchOakLong = new DetailedQuestStep(this, String.format("25 - 35 Oak Longbows. x%s",
-			ActionsLeft.get(playerXp, skill, 25, 35, FletchingAction.OAK_LONGBOW.getXp())),
-			knife, oakLogs.quantity(-1), bowString.quantity(-1), fl25);
+		fletchOakLong = new DetailedSkillStep(this, "25 - 35 Oak Longbows. ", skill, 25, 35,
+			FletchingAction.OAK_LONGBOW.getXp(), knife, oakLogs, bowString.quantity(-1), fl25);
 
-		fletchWillowShort = new DetailedQuestStep(this, String.format("35 - 40 Willow Shortbows. x%s",
-			ActionsLeft.get(playerXp, skill, 35, 40, FletchingAction.WILLOW_SHORTBOW.getXp())),
+		fletchWillowShort = new DetailedSkillStep(this, "35 - 40 Willow Shortbows.", skill, 35, 40,
+			FletchingAction.WILLOW_SHORTBOW.getXp(),
 			knife, willowLogs, bowString.quantity(-1), fl35);
 
-		fletchWillowLong = new DetailedQuestStep(this, String.format("40 - 50 Willow Longbows. x%s",
-			ActionsLeft.get(playerXp, skill, 40, 50, FletchingAction.WILLOW_LONGBOW.getXp())),
+		fletchWillowLong = new DetailedSkillStep(this, "40 - 50 Willow Longbows", skill, 40, 50,
+			FletchingAction.WILLOW_LONGBOW.getXp(),
 			knife, willowLogs, bowString.quantity(-1), fl40);
 
-		fletchMapleShort = new DetailedQuestStep(this, String.format("50 - 55 Maple Shortbows. x%s",
-			ActionsLeft.get(playerXp, skill, 50, 55, FletchingAction.MAPLE_SHORTBOW.getXp())),
+		fletchMapleShort = new DetailedSkillStep(this, "50 - 55 Maple Shortbows.", skill, 50, 55,
+			FletchingAction.MAPLE_SHORTBOW.getXp(),
 			knife, mapleLogs, bowString.quantity(-1), fl50);
 
-		fletchMapleLong = new DetailedQuestStep(this, String.format("55 - 65 Maple Longbows. x%s",
-			ActionsLeft.get(playerXp, skill, 55, 65, FletchingAction.MAPLE_LONGBOW.getXp())),
+		fletchMapleLong = new DetailedSkillStep(this, "55 - 65 Maple Longbows.", skill, 55, 65,
+			FletchingAction.MAPLE_LONGBOW.getXp(),
 			knife, mapleLogs, bowString.quantity(-1), fl55);
 
-		fletchYewShort = new DetailedQuestStep(this, String.format("65 - 70 Yew Shortbows. x%s",
-			ActionsLeft.get(playerXp, skill, 65, 70, FletchingAction.YEW_SHORTBOW.getXp())),
+		fletchYewShort = new DetailedSkillStep(this, "65 - 70 Yew Shortbows.", skill, 65, 70,
+			FletchingAction.YEW_SHORTBOW.getXp(),
 			knife, yewLogs, bowString.quantity(-1), fl65);
 
-		fletchYewLong = new DetailedQuestStep(this, String.format("70 - 80 Yew Longbows. x%s",
-			ActionsLeft.get(playerXp, skill, 70, 80, FletchingAction.YEW_LONGBOW.getXp())),
+		fletchYewLong = new DetailedSkillStep(this, "70 - 80 Yew Longbows.", skill, 70, 80,
+			FletchingAction.YEW_LONGBOW.getXp(),
 			knife, yewLogs, bowString.quantity(-1), fl70);
 
-		fletchMagicShort = new DetailedQuestStep(this, String.format("80 - 85 Magic Shortbows. x%s",
-			ActionsLeft.get(playerXp, skill, 80, 85, FletchingAction.MAGIC_SHORTBOW.getXp())),
+		fletchMagicShort = new DetailedSkillStep(this, "80 - 85 Magic Shortbows.", skill, 80, 85,
+			FletchingAction.MAGIC_SHORTBOW.getXp(),
 			knife, magicLogs, bowString.quantity(-1), fl80);
 
-		fletchMagicLong = new DetailedQuestStep(this, String.format("85 - 99 Magic Longbows. x%s",
-			ActionsLeft.get(playerXp, skill, 85, 99, FletchingAction.MAGIC_LONGBOW.getXp())),
+		fletchMagicLong = new DetailedSkillStep(this, "85 - 99 Magic Longbows.", skill, 85, 99,
+			FletchingAction.MAGIC_LONGBOW.getXp(),
 			knife, magicLogs, bowString.quantity(-1), fl85);
 
-		fletchBattlestaves = new DetailedQuestStep(this, String.format("40 - 80 Battlestaves. x%s",
-			ActionsLeft.get(playerXp, skill, 40, 80, FletchingAction.BATTLESTAFF.getXp())),
+		fletchBattlestaves = new DetailedSkillStep(this, "40 - 80 Battlestaves.", skill, 40, 80,
+			FletchingAction.BATTLESTAFF.getXp(),
 			knife, celastrusBarks, fl40);
 
-		fletchRedwoodShields = new DetailedQuestStep(this, String.format("92 - 99 Redwood Shields. x%s",
-			ActionsLeft.get(playerXp, skill, 92, 99, FletchingAction.REDWOOD_SHIELD.getXp())),
+		fletchRedwoodShields = new DetailedSkillStep(this, "92 - 99 Redwood Shields.", skill, 92, 99,
+			FletchingAction.REDWOOD_SHIELD.getXp(),
 			knife, redwoodLogs, fl92);
 	}
 

@@ -27,6 +27,7 @@ package com.questhelper.panel;
 import com.questhelper.ExternalQuestResources;
 import com.questhelper.Icon;
 import com.questhelper.QuestHelperPlugin;
+import com.questhelper.questhelpers.Quest;
 import com.questhelper.questhelpers.QuestHelper;
 import com.questhelper.requirements.Requirement;
 import com.questhelper.requirements.item.ItemRequirement;
@@ -34,9 +35,6 @@ import com.questhelper.requirements.item.NoItemRequirement;
 import com.questhelper.rewards.Reward;
 import com.questhelper.steps.DetailedQuestStep;
 import com.questhelper.steps.QuestStep;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import net.runelite.api.Client;
 import net.runelite.api.Item;
 import net.runelite.client.ui.ColorScheme;
@@ -272,7 +270,17 @@ public class QuestOverviewPanel extends JPanel
 			for (QuestStep step : panel.getSteps())
 			{
 				JLabel label = panel.getStepsLabels().get(step);
-				if (label != null)
+				Quest.Type questType = step.getQuestHelper().getQuest().getQuestType();
+
+				if (questType == Quest.Type.SKILL)
+				{
+					if (label != null)
+					{
+						label.setText(panel.generateSkillText(step));
+					}
+				}
+
+				if (label != null && questType != Quest.Type.SKILL)
 				{
 					label.setText(panel.generateText(step));
 				}
