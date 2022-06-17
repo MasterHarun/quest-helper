@@ -272,17 +272,16 @@ public class QuestOverviewPanel extends JPanel
 				JLabel label = panel.getStepsLabels().get(step);
 				Quest.Type questType = step.getQuestHelper().getQuest().getQuestType();
 
-				if (questType == Quest.Type.SKILL)
+				if (label != null)
 				{
-					if (label != null)
+					if (questType == Quest.Type.SKILL)
 					{
 						label.setText(panel.generateSkillText(step));
 					}
-				}
-
-				if (label != null && questType != Quest.Type.SKILL)
-				{
-					label.setText(panel.generateText(step));
+					else
+					{
+						label.setText(panel.generateText(step));
+					}
 				}
 			}
 		});

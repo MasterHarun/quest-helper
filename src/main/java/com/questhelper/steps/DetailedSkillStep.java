@@ -57,6 +57,10 @@ public class DetailedSkillStep extends DetailedQuestStep
 
 	public void actionsLeft(int lowerLevel, int nextLevel, double actionXp)
 	{
+		if(lowerLevel == 0 || nextLevel == 0)
+		{
+			this.actionsRemaining = "0";
+		}
 		int nextLevelXp = Experience.getXpForLevel(nextLevel);
 		int lowerLevelXp = Experience.getXpForLevel(lowerLevel);
 		skillLevel = client.getRealSkillLevel(skill);

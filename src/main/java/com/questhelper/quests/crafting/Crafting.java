@@ -107,7 +107,7 @@ public class Crafting extends ComplexStateQuestHelper
 		SkillStep fullTraining = new SkillStep(this, acquireTools);
 
 		fullTraining.addStep(c89, cutAmDarts);
-		fullTraining.addStep(cc87, cutAmJavs);
+		fullTraining.addStep(c87, cutAmJavs);
 		fullTraining.addStep(c87, blowLightOrb);
 		fullTraining.addStep(c85, cutAmArrows);
 		fullTraining.addStep(c84, craftBlackHideBody);
@@ -120,13 +120,13 @@ public class Crafting extends ComplexStateQuestHelper
 		fullTraining.addStep(c62, craftFireStaff);
 		fullTraining.addStep(c61, superGlassMake);
 		fullTraining.addStep(c58, craftEarthStaff);
-		fullTraining.addStep(cc58, diamondBrace); // dupe
+		fullTraining.addStep(c58, diamondBrace);
 		fullTraining.addStep(c55, cutDragon);
 		fullTraining.addStep(c54, craftWaterStaff);
 		fullTraining.addStep(c49, blowLens);
 		fullTraining.addStep(c46, blowOrb);
 		fullTraining.addStep(c43, cutDiamond);
-		fullTraining.addStep(cc42, blowFishbowl); //dupe
+		fullTraining.addStep(c42, blowFishbowl);
 		fullTraining.addStep(c42, rubyBrace);
 		fullTraining.addStep(c38, topazBrace);
 		fullTraining.addStep(c34, cutRuby);
@@ -141,11 +141,11 @@ public class Crafting extends ComplexStateQuestHelper
 		fullTraining.addStep(c12, blowOilLamp);
 		fullTraining.addStep(c11, craftLeatherVambs);
 		fullTraining.addStep(c9, craftLeatherCowl);
-		fullTraining.addStep(cc7, craftLeatherBoots); //dupe
+		fullTraining.addStep(c7, craftLeatherBoots);
 		fullTraining.addStep(c7, goldBrace);
 		fullTraining.addStep(c4, blowCandleLantern);
-		fullTraining.addStep(cc1, blowBeerGlass); //dupe
 		fullTraining.addStep(c1, craftLeatherGloves);
+		fullTraining.addStep(c1, blowBeerGlass);
 
 		return fullTraining;
 	}
@@ -153,10 +153,8 @@ public class Crafting extends ComplexStateQuestHelper
 	private void setupRequirements()
 	{
 		c1 = new SkillRequirement(Skill.CRAFTING, 1);
-		cc1 = new SkillRequirement(Skill.CRAFTING, 1);
 		c4 = new SkillRequirement(Skill.CRAFTING, 4);
 		c7 = new SkillRequirement(Skill.CRAFTING, 7);
-		cc7 = new SkillRequirement(Skill.CRAFTING, 7);
 		c9 = new SkillRequirement(Skill.CRAFTING, 9);
 		c11 = new SkillRequirement(Skill.CRAFTING, 11);
 		c12 = new SkillRequirement(Skill.CRAFTING, 12);
@@ -171,14 +169,12 @@ public class Crafting extends ComplexStateQuestHelper
 		c34 = new SkillRequirement(Skill.CRAFTING, 34);
 		c38 = new SkillRequirement(Skill.CRAFTING, 38);
 		c42 = new SkillRequirement(Skill.CRAFTING, 42);
-		cc42 = new SkillRequirement(Skill.CRAFTING, 42);
 		c43 = new SkillRequirement(Skill.CRAFTING, 43);
 		c46 = new SkillRequirement(Skill.CRAFTING, 46);
 		c49 = new SkillRequirement(Skill.CRAFTING, 49);
 		c54 = new SkillRequirement(Skill.CRAFTING, 54);
 		c55 = new SkillRequirement(Skill.CRAFTING, 55);
 		c58 = new SkillRequirement(Skill.CRAFTING, 58);
-		cc58 = new SkillRequirement(Skill.CRAFTING, 58);
 		c61 = new SkillRequirement(Skill.CRAFTING, 61);
 		c62 = new SkillRequirement(Skill.CRAFTING, 62);
 		c63 = new SkillRequirement(Skill.CRAFTING, 63);
@@ -190,7 +186,6 @@ public class Crafting extends ComplexStateQuestHelper
 		c84 = new SkillRequirement(Skill.CRAFTING, 84);
 		c85 = new SkillRequirement(Skill.CRAFTING, 85);
 		c87 = new SkillRequirement(Skill.CRAFTING, 87);
-		cc87 = new SkillRequirement(Skill.CRAFTING, 87);
 		c89 = new SkillRequirement(Skill.CRAFTING, 89);
 		c99 = new SkillRequirement(Skill.CRAFTING, 99);
 		m77 = new SkillRequirement(Skill.MAGIC, 77);
@@ -319,7 +314,7 @@ public class Crafting extends ComplexStateQuestHelper
 
 		craftLeatherGloves = new DetailedSkillStep(this, "1 - 7 Leather Gloves.",
 			skill, 1, 7, CraftingAction.LEATHER_GLOVES.getXp(),
-			needle, thread, leather);
+			needle, thread, leather, c1);
 
 		craftLeatherBoots = new DetailedSkillStep(this, "7 - 9 Leather Boots.",
 			skill, 7, 9, CraftingAction.LEATHER_BOOTS.getXp(),
@@ -507,12 +502,7 @@ public class Crafting extends ComplexStateQuestHelper
 	public List<PanelDetails> getPanels()
 	{
 		List<PanelDetails> allSteps = new ArrayList<>();
-//		allSteps.add(new PanelDetails("Acquire crafting tools", Collections.singletonList(acquireTools),
-//			Arrays.asList(chisel, needle, thread, glassBlowingPipe, braceletMould)));
-//		if (toolCheck(toolz))
-//		{
-//			allSteps.get(0).setHideCondition(c99);
-//		}
+
 		allSteps.add(new PanelDetails("1 - 20: Leather Crafting", Arrays.asList(
 			craftLeatherGloves, craftLeatherBoots, craftLeatherCowl, craftLeatherVambs, craftLeatherBody),
 			needle, thread, leather));

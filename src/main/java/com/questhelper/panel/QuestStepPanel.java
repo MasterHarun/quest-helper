@@ -26,6 +26,7 @@ package com.questhelper.panel;
 
 import com.questhelper.requirements.Requirement;
 import com.questhelper.steps.DetailedSkillStep;
+import com.questhelper.steps.ObjectStep;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -215,7 +216,15 @@ public class QuestStepPanel extends JPanel
 			}
 			step.getText().forEach(line -> text.append(line).append(" "));
 		}
+		else if (step instanceof ObjectStep)
+		{
+			step.getText().forEach(line -> text.append(line).append(" "));
+		}
 		return "<html><body style = 'text-align:left'>" + text + "</body></html>";
+	}
+	public void showTools(JPanel panel)
+	{
+		panel.getComponents()[0].getName();
 	}
 
 	public List<QuestStep> getSteps()

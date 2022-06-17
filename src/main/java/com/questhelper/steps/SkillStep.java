@@ -6,10 +6,11 @@ import com.questhelper.requirements.Requirement;
 import com.questhelper.requirements.conditional.InitializableRequirement;
 import com.questhelper.requirements.item.ItemRequirement;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
@@ -29,7 +30,7 @@ public class SkillStep extends QuestStep implements OwnerStep
 
 	protected boolean started = false;
 
-	protected final LinkedHashMap<Requirement, QuestStep> steps;
+	protected final LinkedHashMap<Requirement, LinkedList<QuestStep>> steps;
 
 	protected QuestStep currentStep;
 
@@ -40,8 +41,10 @@ public class SkillStep extends QuestStep implements OwnerStep
 		super(questHelper);
 		this.requirements = requirements;
 		this.steps = new LinkedHashMap<>();
+		LinkedList<QuestStep> quests = new LinkedList<>();
 
-		this.steps.put(null, step);
+		quests.add(step);
+		this.steps.put(null, quests);
 	}
 
 	public void addStep(Requirement requirement, QuestStep step)
@@ -52,14 +55,21 @@ public class SkillStep extends QuestStep implements OwnerStep
 	public void addStep(Requirement requirement, QuestStep step, boolean isLockable)
 	{
 		step.setLockable(isLockable);
-		this.steps.put(requirement, step);
-
+		if (this.steps.containsKey(requirement))
+		{
+			this.steps.get(requirement).add(step);
+		}
+		else
+		{
+			LinkedList<QuestStep> quests = new LinkedList<>();
+			quests.add(step);
+			this.steps.put(requirement, quests);
+		}
 	}
 
 	@Override
 	public void startUp()
 	{
-
 		steps.keySet().stream()
 			.filter(InitializableRequirement.class::isInstance)
 			.forEach(req -> ((InitializableRequirement) req).initialize(client));
@@ -96,76 +106,112 @@ public class SkillStep extends QuestStep implements OwnerStep
 		}
 	}
 
-
 	protected void updateSteps()
 	{
 		Requirement lastPossibleCondition = null;
-		LinkedHashMap<Requirement, Boolean> reqs = new LinkedHashMap<>();
-		Iterator<Map.Entry<Requirement, QuestStep>> stepItr = steps.entrySet().iterator();
 
-		while(stepItr.hasNext())
+		for (Requirement conditions : steps.keySet())
 		{
-			Map.Entry<Requirement, QuestStep> entry = stepItr.next();
-
-			if (entry.getKey() != null)
+			if (steps.get(conditions).size() <= 1)
 			{
-				for (Requirement req : ((DetailedSkillStep) entry.getValue()).getRequirements())
+				boolean stepIsLocked = steps.get(conditions).getFirst().isLocked();
+				if (conditions != null && conditions.check(client) && !stepIsLocked)
 				{
-					if (req instanceof ItemRequirement)
-					{
-						ItemRequirement itemReq;
-						itemReq = ((ItemRequirement) req);
-						itemReq = itemReq.alsoCheckBank(questBank);
-						if (itemReq.check(client))
-						{
-							reqs.put(req, true);
-						}
-						else
-						{
-							reqs.put(req, false);
-						}
-					}
-
-				}
-			}
-
-			Requirement conditions = entry.getKey();
-			boolean stepIsLocked = steps.get(conditions).isLocked();
-			if (conditions != null && conditions.check(client) && !stepIsLocked)
-			{
-
-				if (!reqs.containsValue(false))
-				{
-					startUpStep(steps.get(conditions));
-					reqs.clear();
+					startUpStep(steps.get(conditions).getFirst());
 					return;
 				}
-				lastPossibleCondition = conditions;
+				else if (steps.get(conditions).getFirst().isBlocker() && !stepIsLocked)
+				{
+					startUpStep(steps.get(lastPossibleCondition).getFirst());
+					return;
+				}
+				else if (conditions != null && !stepIsLocked)
+				{
+					lastPossibleCondition = conditions;
+				}
+
 			}
-			else if (steps.get(conditions).isBlocker() && stepIsLocked)
+			else
 			{
 
-				startUpStep(steps.get(lastPossibleCondition));
-				reqs.clear();
-				return;
-			}
-			else if (conditions != null && !stepIsLocked)
-			{
+				QuestStep quest = null;
+				boolean stepIsLocked = steps.get(conditions).getFirst().isLocked();
+				if (conditions != null && conditions.check(client) && !stepIsLocked)
+				{
+					quest = questItemCheck(steps.get(conditions));
 
-				lastPossibleCondition = conditions;
-				reqs.clear();
+					startUpStep(quest);
+					return;
+				}
+				else if (steps.get(conditions).getFirst().isBlocker() && !stepIsLocked)
+				{
+					quest = questItemCheck(steps.get(lastPossibleCondition));
+
+					startUpStep(quest);
+					return;
+				}
+				else if (conditions != null && !stepIsLocked)
+				{
+					lastPossibleCondition = conditions;
+				}
 			}
-			reqs.clear();
 		}
-
-		if (!steps.get(null).isLocked())
+		if (!steps.get(null).getFirst().isLocked())
 		{
-			startUpStep(steps.get(null));
+			startUpStep(steps.get(null).getFirst());
 		}
 		else
 		{
-			startUpStep(steps.get(lastPossibleCondition));
+			startUpStep(steps.get(lastPossibleCondition).getFirst());
 		}
+	}
+
+	protected QuestStep questItemCheck(LinkedList<QuestStep> questList)
+	{
+		if (questList == null)
+		{
+			return null;
+		}
+		LinkedHashMap<QuestStep, Boolean> questReqs = new LinkedHashMap<>();
+		QuestStep quest = questList.getFirst();
+		for (QuestStep quests : questList)
+		{
+			if (quests instanceof DetailedSkillStep)
+			{
+				List<Requirement> itemsList = ((DetailedSkillStep) quests).getRequirements();
+				LinkedHashMap<Requirement, Boolean> itemReqs = new LinkedHashMap<>();
+
+				for (Requirement item : itemsList)
+				{
+					if (((ItemRequirement) item).check(client))
+					{
+						itemReqs.put(item, true);
+					}
+					else
+					{
+						itemReqs.put(item, false);
+					}
+				}
+
+				if (!itemReqs.containsValue(false))
+				{
+					return quests;
+				}
+				else if (itemReqs.containsValue(false) && itemReqs.containsValue(true))
+				{
+					questReqs.put(quests, false);
+				}
+				else if (!itemReqs.containsValue(true))
+				{
+					questReqs.put(quests, false);
+				}
+			}
+		}
+		if (!questReqs.containsValue(true))
+		{
+			quest = questReqs.entrySet().iterator().next().getKey();
+		}
+		return quest;
 	}
 
 	protected void startUpStep(QuestStep step)
@@ -228,10 +274,9 @@ public class SkillStep extends QuestStep implements OwnerStep
 		return steps.keySet();
 	}
 
-
 	@Override
 	public Collection<QuestStep> getSteps()
 	{
-		return steps.values();
+		return steps.values().stream().flatMap(LinkedList::stream).collect(Collectors.toList());
 	}
 }

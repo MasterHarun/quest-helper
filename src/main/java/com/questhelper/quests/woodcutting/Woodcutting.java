@@ -116,7 +116,7 @@ public class Woodcutting extends ComplexStateQuestHelper
 			new Conditions(wc31, new Conditions(LogicType.NOR, wc41))
 		);
 		runeAxe = new ItemRequirement("Rune axe", ItemID.RUNE_AXE).showConditioned(
-			new Conditions(wc41, new Conditions(LogicType.NOR, wc99))
+			new Conditions(wc41, new Conditions(LogicType.NOR, wc61))
 		);
 		dragonAxe = new ItemRequirement("Dragon axe", ItemID.DRAGON_AXE).showConditioned(
 			new Conditions(wc61)
@@ -134,8 +134,6 @@ public class Woodcutting extends ComplexStateQuestHelper
 		name = tool.getName();
 		toolId = tool.getId();
 
-
-
 		lumberjackBody = new ItemRequirement("Lumberjack top", ItemID.LUMBERJACK_TOP);
 		lumberjackBody = lumberjackBody.showConditioned(lumberjackBody.alsoCheckBank(questBank));
 
@@ -152,25 +150,19 @@ public class Woodcutting extends ComplexStateQuestHelper
 	private void setupSteps()
 	{
 
-		tool = skillToolLvlChecker(skillLvl, tools);
-		name = tool.getName();
-		toolId = tool.getId();
-
 		acquireNewAxe = new ObjectStep(this, toolId,"Go get a new " + name);
+
 		chopNormalTree = new ObjectStep(this, ObjectID.TREE, new WorldPoint(3192, 3223, 0),
 			"Chop normal trees around Lumbridge until 15 Woodcutting. You can choose to burn the logs as you go, drop" +
 				" them, or bank them.", true, tool);
-//			,lumberjackHat, lumberjackBody, lumberjackLegs, lumberjackBoots);
 
 		chopOakTrees = new ObjectStep(this, ObjectID.OAK_10820, new WorldPoint(3190, 3247, 0),
 			"Chop normal trees around Lumbridge until 35 Woodcutting. You can choose to burn the logs as you go, drop" +
 				" them, or bank them.", true, tool);
-//			lumberjackHat, lumberjackBody, lumberjackLegs, lumberjackBoots, wc15);
 
 		chopTeakTrees = new ObjectStep(this, ObjectID.TEAK, new WorldPoint(2335, 3048, 0),
 			"Chop teak trees south of Castle Wars until 99 Woodcutting. You can choose to burn the logs as you go, " +
 				"drop them, or bank them.", true, tool);
-//			, lumberjackHat, lumberjackBody, lumberjackLegs, lumberjackBoots, wc35);
 	}
 
 	@Override
@@ -197,21 +189,16 @@ public class Woodcutting extends ComplexStateQuestHelper
 	public List<PanelDetails> getPanels()
 	{
 		List<PanelDetails> allSteps = new ArrayList<>();
-		allSteps.add(new PanelDetails("Acquire a new tool", Collections.singletonList(acquireNewAxe),
-			tool));
-
-		// this checks to remove or add to the panel
-		if (tool.check(client))
-		{
-			allSteps.get(0).setHideCondition(tool);
-		}
+//		allSteps.add(new PanelDetails("Acquire a new axe", Collections.singletonList(acquireNewAxe),
+//			tool));
+//		allSteps.get(0).setHideCondition(tool);
 
 		allSteps.add(new PanelDetails("1 - 15: Cut normal trees", Collections.singletonList(chopNormalTree),
-			tool));
+			tool, lumberjackHat, lumberjackBody, lumberjackLegs, lumberjackBoots));
 		allSteps.add(new PanelDetails("15 - 35: Cut oak trees", Collections.singletonList(chopOakTrees),
-			tool));
+			tool, lumberjackHat, lumberjackBody, lumberjackLegs, lumberjackBoots));
 		allSteps.add(new PanelDetails("35 - 99: Cut teak trees", Collections.singletonList(chopTeakTrees),
-			tool));
+			tool, lumberjackHat, lumberjackBody, lumberjackLegs, lumberjackBoots));
 		return allSteps;
 	}
 }

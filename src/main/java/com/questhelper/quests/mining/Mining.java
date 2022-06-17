@@ -205,53 +205,48 @@ public class Mining extends ComplexStateQuestHelper
 		mineCopperTinOre = new ObjectStep(this, ObjectID.ROCKS_11361, new WorldPoint(3226, 3146, 0),
 			"Mine copper or tin ore until 15 Mining. You can choose to drop the ore, or bank them.",
 			true,
-			tool);//, prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+			tool);
 		mineCopperTinOre.addAlternateObjects(ObjectID.ROCKS_11161);
 
 		mineIronOre = new ObjectStep(this, ObjectID.ROCKS_11364, new WorldPoint(3295, 3310, 0),
 			"Mine iron ore until 45/70 Mining. You can choose to drop the ore, or bank them.",
 			true,
-			tool);//prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+			tool);
 		mineIronOre.addAlternateObjects(ObjectID.ROCKS_11365);
 
 		mineMotherlode = new ObjectStep(this, ObjectID.ORE_VEIN_26661, new WorldPoint(3726, 5671, 0),
 			"Mine at the motherlode. Collect pay-dirt and deposit into the hopper.", true,
-			tool);//prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+			tool);
 		mineMotherlode.addAlternateObjects(ObjectID.ORE_VEIN_26662, ObjectID.ORE_VEIN_26663, ObjectID.ORE_VEIN_26664);
 
 		mineGem = new ObjectStep(this, ObjectID.ROCKS_11380, new WorldPoint(2821, 2999, 0),
 			"Mine gem rocks at Shilo Village. Bring a charged Amulet of Glory for higher chance of receiving a gem. " +
 				"Players who have completed the hard tasks of the Karamja Diary can access the underground portion of the mine.",
 			true,
-			tool, shiloVillage);//prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs, amuletGlory, karamjaGloves3,
-//			shiloVillage);
+			tool, shiloVillage);
 		mineGem.addAlternateObjects(ObjectID.ROCKS_11381);
 
 		mineGranite = new ObjectStep(this, ObjectID.ROCKS_11387, new WorldPoint(3166, 2909, 0),
 			"Mine Granite.",
 			true,
-			tool);//prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+			tool);
 
 		mineVolcanic = new ObjectStep(this, ObjectID.VOLCANO_ENTRANCE, new WorldPoint(3816, 3808, 0),
 			"Participate in the Volcanic Mine minigame.",
 			true,
-			tool, boneVoyage);//prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs,
-//			boneVoyage);
+			tool, boneVoyage);
 //		mineVolcanic.addAlternateObjects();
 
 		mineBlast = new ObjectStep(this, ObjectID.HARD_ROCK, new WorldPoint(1488, 3871, 0),
 			"Participate in the Blast Mine minigame. For effective strategies look into the wiki.",
 			true,
-			tool, chisel, tinderbox, dynamite,
-			lovakengj);
-//		,prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs);
+			tool, chisel, tinderbox, dynamite, lovakengj);
 		mineBlast.addAlternateObjects(ObjectID.HARD_ROCK_28580);
 
 		mineAmethyst = new ObjectStep(this, ObjectID.CRYSTALS, new WorldPoint(3024, 9704, 0),
 			"Mine Amethyst Ore in the Mining guild.",
 			true,
-			tool, //prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs,
-			expertMiningGloves, varrockArmour4);
+			tool, expertMiningGloves, varrockArmour4);
 		mineAmethyst.addAlternateObjects(ObjectID.CRYSTALS_11389);
 
 
@@ -281,59 +276,47 @@ public class Mining extends ComplexStateQuestHelper
 	public List<PanelDetails> getPanels()
 	{
 		List<PanelDetails> allSteps = new ArrayList<>();
-		allSteps.add(new PanelDetails("Acquire a new tool", Collections.singletonList(acquireNewPickaxe), tool));
+//		allSteps.add(new PanelDetails("Acquire a new tool", Collections.singletonList(acquireNewPickaxe), tool));
+//		allSteps.get(0).setHideCondition(new Conditions(LogicType.AND, tool));
 
-		if (tool.check(client))
-		{
-			allSteps.get(0).setHideCondition(tool);
-		}
 		allSteps.add(new PanelDetails("1 - 15 Mine Copper or Tin ore", Collections.singletonList(mineCopperTinOre),
 			tool,
-//			ironPickAxe, steelPickAxe, blackPickAxe,
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 
 		allSteps.add(new PanelDetails("15 - 45/70 Mine Iron ore", Collections.singletonList(mineIronOre),
 			tool,
-//			blackPickAxe, mithrilPickAxe, adamantPickAxe, runePickAxe, dragonPickAxe,
 			new SkillRequirement(Skill.MINING, 15),
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 
 		allSteps.add(new PanelDetails("30 - 99 Motherlode Mine", Collections.singletonList(mineMotherlode),
 			tool,
-//			mithrilPickAxe, adamantPickAxe, runePickAxe, dragonPickAxe,
 			new SkillRequirement(Skill.MINING, 30),
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 
 		allSteps.add(new PanelDetails("40 - 99 Mine Gem rocks.", Collections.singletonList(mineGem),
 			tool,
-//			adamantPickAxe, runePickAxe, dragonPickAxe,
 			new SkillRequirement(Skill.MINING, 40),
-			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs,
 			amuletGlory, karamjaGloves3,
 			shiloVillage));
 
 		allSteps.add(new PanelDetails("45 - 99 Mine Granite", Collections.singletonList(mineGranite),
 			tool,
-//			runePickAxe, dragonPickAxe,
 			new SkillRequirement(Skill.MINING, 45),
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 
 		allSteps.add(new PanelDetails("70 - 99 Volcanic Mine", Collections.singletonList(mineVolcanic),
 			tool,
-//			runePickAxe, dragonPickAxe,
 			new SkillRequirement(Skill.MINING, 70),
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 
 		allSteps.add(new PanelDetails("75 - 99 Mine Blast Mine", Collections.singletonList(mineBlast),
 			tool,
-//			runePickAxe, dragonPickAxe,
 			new SkillRequirement(Skill.MINING, 75),
 			chisel, tinderbox, dynamite, lovakengj,
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs));
 
 		allSteps.add(new PanelDetails("92 - 99 Mine Amethyst", Collections.singletonList(mineAmethyst),
 			tool,
-//			runePickAxe, dragonPickAxe,
 			new SkillRequirement(Skill.MINING, 92),
 			prospectorBoots, prospectorHelmet, prospectorJacket, prospectorLegs,
 			varrockArmour4, expertMiningGloves));

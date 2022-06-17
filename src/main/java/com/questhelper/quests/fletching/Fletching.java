@@ -91,6 +91,7 @@ public class Fletching extends ComplexStateQuestHelper
 		fullTraining.addStep(fl20, fletchOakShort);
 		fullTraining.addStep(fl10, fletchLongBows);
 		fullTraining.addStep(fl5, fletchShortBows);
+		fullTraining.addStep(fl1, fletchArrowShafts);
 
 		return fullTraining;
 	}
@@ -113,7 +114,8 @@ public class Fletching extends ComplexStateQuestHelper
 		fl85 = new SkillRequirement(Skill.FLETCHING, 85);
 		fl92 = new SkillRequirement(Skill.FLETCHING, 92);
 
-		knife = new ItemRequirement("Knife", ItemID.KNIFE);
+		knife = new ItemRequirement("Knife", ItemID.KNIFE).showConditioned(
+			new Conditions(fl1));
 		knife = knife.alsoCheckBank(questBank);
 
 		bowString = new ItemRequirement("Bow String", ItemID.BOW_STRING).showConditioned(
@@ -166,11 +168,11 @@ public class Fletching extends ComplexStateQuestHelper
 	private void setupSteps()
 	{
 		Skill skill = Skill.FLETCHING;
-		acquireKnife = new ObjectStep(this, ItemID.KNIFE, "Get a new knife");
+		acquireKnife = new ObjectStep(this, ItemID.KNIFE, "Get a new knife", fl1);
 
 		fletchArrowShafts = new DetailedSkillStep(this, "Fletch Arrow shafts to 5.", skill, 1, 5,
 			FletchingAction.ARROW_SHAFT.getXp() * 15,
-			knife, logs);
+			knife, logs, fl1);
 
 		fletchShortBows = new DetailedSkillStep(this, "5 - 10 Shortbows.", skill, 5, 10,
 			FletchingAction.SHORTBOW.getXp(),
@@ -247,12 +249,8 @@ public class Fletching extends ComplexStateQuestHelper
 	{
 		List<PanelDetails> allSteps = new ArrayList<>();
 
-		allSteps.add(new PanelDetails("Get a knife", Collections.singletonList(acquireKnife), knife));
-
-		if (knife.check(client))
-		{
-			allSteps.get(0).setHideCondition(knife);
-		}
+//		allSteps.add(new PanelDetails("Get a knife", Collections.singletonList(acquireKnife), knife));
+//		allSteps.get(0).setHideCondition(knife);
 
 		allSteps.add(new PanelDetails("1 - 5/10 Fletch Arrow shafts", Collections.singletonList(fletchArrowShafts),
 			knife, logs));
