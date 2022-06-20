@@ -103,7 +103,7 @@ public class Mining extends ComplexStateQuestHelper
 		return fullTraining;
 	}
 
-	private void setupRequirements()
+	public void setupRequirements()
 	{
 		m1 = new SkillRequirement(Skill.MINING, 1);
 		m6 = new SkillRequirement(Skill.MINING, 6);

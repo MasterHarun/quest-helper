@@ -73,9 +73,7 @@ public class Crafting extends ComplexStateQuestHelper
 	SkillRequirement m77, c61;
 
 	ItemRequirement amethyst;
-	SkillRequirement c83, c85, c89;
-
-	SkillRequirement cc1, cc7, cc42, cc58, cc87, c99;
+	SkillRequirement c83, c85, c89, c99;
 	SpellbookRequirement lunar;
 
 	QuestStep craftLeatherGloves, craftLeatherBoots, craftLeatherCowl, craftLeatherVambs, craftLeatherBody;
@@ -126,8 +124,8 @@ public class Crafting extends ComplexStateQuestHelper
 		fullTraining.addStep(c49, blowLens);
 		fullTraining.addStep(c46, blowOrb);
 		fullTraining.addStep(c43, cutDiamond);
-		fullTraining.addStep(c42, blowFishbowl);
 		fullTraining.addStep(c42, rubyBrace);
+		fullTraining.addStep(c42, blowFishbowl);
 		fullTraining.addStep(c38, topazBrace);
 		fullTraining.addStep(c34, cutRuby);
 		fullTraining.addStep(c33, blowVial);
@@ -150,7 +148,7 @@ public class Crafting extends ComplexStateQuestHelper
 		return fullTraining;
 	}
 
-	private void setupRequirements()
+	public void setupRequirements()
 	{
 		c1 = new SkillRequirement(Skill.CRAFTING, 1);
 		c4 = new SkillRequirement(Skill.CRAFTING, 4);

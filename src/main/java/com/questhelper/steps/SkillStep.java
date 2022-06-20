@@ -5,6 +5,7 @@ import com.questhelper.questhelpers.QuestHelper;
 import com.questhelper.requirements.Requirement;
 import com.questhelper.requirements.conditional.InitializableRequirement;
 import com.questhelper.requirements.item.ItemRequirement;
+import com.questhelper.requirements.player.SkillRequirement;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -109,61 +110,72 @@ public class SkillStep extends QuestStep implements OwnerStep
 	protected void updateSteps()
 	{
 		Requirement lastPossibleCondition = null;
+		LinkedList<QuestStep> questList = new LinkedList<>();
+//		//check player skill level.
+//		//check which steps have a range that has the player's skill level
+//		//for each skillstep check...
+//		//if player skill level is lower than the lower and higher levels continue
+//		//if player skill level is lower than the higher level of the step and higher than the low level of the step
+//		//push this step to an array of steps to check for items
+//		// if player skill level is higher than the higher levels and lower levels stop and use the array. otherwise if not use highest possible step
 
 		for (Requirement conditions : steps.keySet())
 		{
-			if (steps.get(conditions).size() <= 1)
+			if (conditions != null)
 			{
-				boolean stepIsLocked = steps.get(conditions).getFirst().isLocked();
-				if (conditions != null && conditions.check(client) && !stepIsLocked)
+				int playerLevel = client.getRealSkillLevel((((SkillRequirement) conditions).getSkill()));
+				int skillReq = ((SkillRequirement) conditions).getRequiredLevel();
+				QuestStep quest = steps.get(conditions).getFirst();
+
+				if (quest instanceof DetailedSkillStep)
 				{
-					startUpStep(steps.get(conditions).getFirst());
-					return;
+					int lowerLevel = ((DetailedSkillStep) quest).getLowerLevel();
+					int highLevel = ((DetailedSkillStep) quest).getNextLevel();
+
+					if (playerLevel < skillReq) { continue; }
+
+					else if (playerLevel < highLevel && playerLevel >= lowerLevel)
+					{
+						if (steps.get(conditions).size() > 1)
+						{
+							LinkedList<QuestStep> skillSteps = steps.get(conditions);
+							questList.addAll(skillSteps);
+						}
+						questList.add(quest);
+					}
+
+					else if (playerLevel > highLevel && playerLevel > lowerLevel)
+					{
+						QuestStep nextQuest = questItemCheck(questList);
+						startUpStep(nextQuest);
+					}
 				}
-				else if (steps.get(conditions).getFirst().isBlocker() && !stepIsLocked)
+
+				if (quest instanceof ObjectStep)
 				{
-					startUpStep(steps.get(lastPossibleCondition).getFirst());
-					return;
-				}
-				else if (conditions != null && !stepIsLocked)
-				{
-					lastPossibleCondition = conditions;
+					boolean stepIsLocked = steps.get(conditions).getFirst().isLocked();
+					if (conditions.check(client) && !stepIsLocked)
+					{
+						startUpStep(steps.get(conditions).getFirst());
+						return;
+					}
+
+					else if (steps.get(conditions).getFirst().isBlocker() && !stepIsLocked)
+					{
+						startUpStep(steps.get(lastPossibleCondition).getFirst());
+						return;
+					}
+
+					else if (!stepIsLocked)
+					{
+						lastPossibleCondition = conditions;
+					}
 				}
 
 			}
-			else
-			{
 
-				QuestStep quest = null;
-				boolean stepIsLocked = steps.get(conditions).getFirst().isLocked();
-				if (conditions != null && conditions.check(client) && !stepIsLocked)
-				{
-					quest = questItemCheck(steps.get(conditions));
+		}
 
-					startUpStep(quest);
-					return;
-				}
-				else if (steps.get(conditions).getFirst().isBlocker() && !stepIsLocked)
-				{
-					quest = questItemCheck(steps.get(lastPossibleCondition));
-
-					startUpStep(quest);
-					return;
-				}
-				else if (conditions != null && !stepIsLocked)
-				{
-					lastPossibleCondition = conditions;
-				}
-			}
-		}
-		if (!steps.get(null).getFirst().isLocked())
-		{
-			startUpStep(steps.get(null).getFirst());
-		}
-		else
-		{
-			startUpStep(steps.get(lastPossibleCondition).getFirst());
-		}
 	}
 
 	protected QuestStep questItemCheck(LinkedList<QuestStep> questList)
@@ -183,13 +195,16 @@ public class SkillStep extends QuestStep implements OwnerStep
 
 				for (Requirement item : itemsList)
 				{
-					if (((ItemRequirement) item).check(client))
+					if (item instanceof ItemRequirement)
 					{
-						itemReqs.put(item, true);
-					}
-					else
-					{
-						itemReqs.put(item, false);
+						if (item.check(client))
+						{
+							itemReqs.put(item, true);
+						}
+						else
+						{
+							itemReqs.put(item, false);
+						}
 					}
 				}
 
@@ -209,7 +224,7 @@ public class SkillStep extends QuestStep implements OwnerStep
 		}
 		if (!questReqs.containsValue(true))
 		{
-			quest = questReqs.entrySet().iterator().next().getKey();
+			quest = null;
 		}
 		return quest;
 	}

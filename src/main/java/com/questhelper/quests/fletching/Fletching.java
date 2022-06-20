@@ -41,10 +41,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import lombok.Getter;
 import net.runelite.api.ItemID;
 import net.runelite.api.Skill;
-import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.plugins.skillcalculator.skills.FletchingAction;
 
 @QuestDescriptor(
@@ -96,7 +94,7 @@ public class Fletching extends ComplexStateQuestHelper
 		return fullTraining;
 	}
 
-	private void setupRequirements()
+	public void setupRequirements()
 	{
 		fl1 = new SkillRequirement(Skill.FLETCHING, 1);
 		fl5 = new SkillRequirement(Skill.FLETCHING, 5);

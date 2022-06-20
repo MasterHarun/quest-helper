@@ -9,7 +9,9 @@ import net.runelite.api.events.GameTick;
 
 public class DetailedSkillStep extends DetailedQuestStep
 {
+	@Getter
 	protected int nextLevel;
+	@Getter
 	protected int lowerLevel;
 	protected double actionXp;
 	protected int skillLevel;
