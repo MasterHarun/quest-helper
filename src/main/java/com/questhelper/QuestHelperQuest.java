@@ -356,7 +356,9 @@ public enum QuestHelperQuest
 
 	FLETCHING("Fletching", Skill.FLETCHING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL),
 
-	CRAFTING("Crafting", Skill.CRAFTING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL);
+	CRAFTING("Crafting", Skill.CRAFTING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL),
+
+	FIREMAKING("Firemaking", Skill.FIREMAKING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL);
 
 	@Getter
 	private final int id;
