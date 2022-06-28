@@ -358,7 +358,9 @@ public enum QuestHelperQuest
 
 	CRAFTING("Crafting", Skill.CRAFTING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL),
 
-	FIREMAKING("Firemaking", Skill.FIREMAKING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL);
+	FIREMAKING("Firemaking", Skill.FIREMAKING, 99, Quest.Type.SKILL, Quest.Difficulty.SKILL),
+
+	HERBLORE("Herblore", Skill.HERBLORE , 99, Quest.Type.SKILL, Quest.Difficulty.SKILL);
 
 	@Getter
 	private final int id;

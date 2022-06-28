@@ -222,7 +222,7 @@ public class SkillStep extends QuestStep implements OwnerStep
 				}
 			}
 		}
-		if (!questReqs.containsValue(true))
+		if (!questReqs.containsValue(true) && questList.size() > 1)
 		{
 			quest = null;
 		}

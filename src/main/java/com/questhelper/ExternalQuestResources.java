@@ -275,7 +275,9 @@ public enum ExternalQuestResources {
 
 	CRAFTING("https://oldschool.runescape.wiki/w/Pay-to-play_Crafting_training"),
 
-	FIREMAKING("https://oldschool.runescape.wiki/Pay-to-play_Firemaking_training");
+	FIREMAKING("https://oldschool.runescape.wiki/Pay-to-play_Firemaking_training"),
+
+	HERBLORE("https://oldschool.runescape.wiki/w/Herblore_training");
 	ExternalQuestResources()
 	{
 		this.wikiURL = "not available";
